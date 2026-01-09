@@ -84,9 +84,6 @@ dateInput.value = today;
 dateInput.min = today;
 dateInput.max = today;
 
-// Load old records
-let records = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
-
 form.addEventListener("submit", function(e) {
     e.preventDefault();
 
@@ -100,10 +97,13 @@ form.addEventListener("submit", function(e) {
         return;
     }
 
+    // Save directly for admin panel
+    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
+
     const record = { name, date, status, leaveType };
     records.push(record);
 
-    localStorage.setItem("attendanceRecords", JSON.stringify(records));
+    localStorage.setItem("adminAttendanceRecords", JSON.stringify(records));
 
     alert("Attendance submitted successfully!");
 
@@ -111,6 +111,7 @@ form.addEventListener("submit", function(e) {
     dateInput.value = today;
 });
 </script>
+
 
 </body>
 </html>

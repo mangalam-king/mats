@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MATS Admin Panel</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #4CAF50;
+            color: white;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            background: red;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .clear-btn {
+            background: #ff6600;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>📋 M.A.T.S Admin Panel</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Leave Type</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="adminTable"></tbody>
+</table>
+
+<center>
+    <button class="clear-btn" onclick="clearAll()">Clear All Records</button>
+</center>
+
+<script>
+let records = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
+const table = document.getElementById("adminTable");
+
+function loadRecords() {
+    table.innerHTML = "";
+
+    records.forEach((record, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${record.name}</td>
+            <td>${record.date}</td>
+            <td>${record.status}</td>
+            <td>${record.leaveType}</td>
+            <td><button onclick="deleteRecord(${index})">Delete</button></td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+function deleteRecord(index) {
+    if (confirm("Delete this record?")) {
+        records.splice(index, 1);
+        localStorage.setItem("attendanceRecords", JSON.stringify(records));
+        loadRecords();
+    }
+}
+
+function clearAll() {
+    if (confirm("Are you sure you want to delete all records?")) {
+        localStorage.removeItem("attendanceRecords");
+        records = [];
+        loadRecords();
+    }
+}
+
+loadRecords();
+</script>
+
+</body>
+</html>

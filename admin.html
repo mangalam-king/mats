@@ -1,105 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>MATS Admin Panel</title>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
 
-    <style>
-        body {
-            font-family: Arial;
-            background: #f2f2f2;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-        }
-        table {
-            width: 100%;
-            margin-top: 30px;
-            border-collapse: collapse;
-            background: white;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background: #4CAF50;
-            color: white;
-        }
-        button {
-            padding: 8px 15px;
-            border: none;
-            background: red;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .clear-btn {
-            background: #ff6600;
-            margin-top: 20px;
-        }
-    </style>
+<style>
+body {
+    font-family: Arial;
+    background: #f2f2f2;
+    padding: 20px;
+}
+h1 {
+    text-align: center;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+th {
+    background: #f0f0f0;
+}
+#loginBox, #adminPanel {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ccc;
+}
+#logoutBtn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    float: right;
+    cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 
-<h1>📋 M.A.T.S Admin Panel</h1>
+<!-- Login Box -->
+<div id="loginBox">
+    <h2>Admin Login</h2>
+    <input type="password" id="password" placeholder="Enter Admin Password">
+    <br><br>
+    <button onclick="login()">Login</button>
+</div>
 
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Leave Type</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="adminTable"></tbody>
-</table>
+<!-- Admin Panel -->
+<div id="adminPanel" style="display:none;">
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+    <h1>Admin Attendance Records</h1>
 
-<center>
-    <button class="clear-btn" onclick="clearAll()">Clear All Records</button>
-</center>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Leave Type</th>
+            </tr>
+        </thead>
+        <tbody id="recordsTable"></tbody>
+    </table>
+</div>
 
 <script>
-let records = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
-const table = document.getElementById("adminTable");
+const ADMIN_PASSWORD = "12345";   // Change password if needed
+
+function login() {
+    const pass = document.getElementById("password").value;
+
+    if (pass === ADMIN_PASSWORD) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadRecords();
+    } else {
+        alert("Wrong password!");
+    }
+}
+
+function logout() {
+    document.getElementById("adminPanel").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("password").value = "";
+}
 
 function loadRecords() {
+    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
+    const table = document.getElementById("recordsTable");
+
     table.innerHTML = "";
 
-    records.forEach((record, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${record.name}</td>
-            <td>${record.date}</td>
-            <td>${record.status}</td>
-            <td>${record.leaveType}</td>
-            <td><button onclick="deleteRecord(${index})">Delete</button></td>
+    records.forEach(r => {
+        const row = `
+            <tr>
+                <td>${r.name}</td>
+                <td>${r.date}</td>
+                <td>${r.status}</td>
+                <td>${r.leaveType}</td>
+            </tr>
         `;
-        table.appendChild(row);
+        table.innerHTML += row;
     });
 }
-
-function deleteRecord(index) {
-    if (confirm("Delete this record?")) {
-        records.splice(index, 1);
-        localStorage.setItem("attendanceRecords", JSON.stringify(records));
-        loadRecords();
-    }
-}
-
-function clearAll() {
-    if (confirm("Are you sure you want to delete all records?")) {
-        localStorage.removeItem("attendanceRecords");
-        records = [];
-        loadRecords();
-    }
-}
-
-loadRecords();
 </script>
 
 </body>

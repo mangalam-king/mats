@@ -18,138 +18,112 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance & Leave Calendar</title>
+    <title>Attendance & Leave System</title>
     <style>
-        :root {
-            --present-color: #4CAF50;
-            --leave-color: #f44336;
-            --bg-color: #f4f7f6;
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            padding: 20px;
         }
-
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); display: flex; justify-content: center; padding: 20px; }
-        
-        .calendar-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; }
-
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-
-        .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; }
-        
-        .day-name { font-weight: bold; color: #888; font-size: 0.8rem; margin-bottom: 10px; }
-
-        .day { padding: 10px; cursor: pointer; border-radius: 5px; transition: 0.2s; font-size: 0.9rem; border: 1px solid #eee; }
-        .day:hover { background-color: #e0e0e0; }
-        .day.today { border: 2px solid #2196F3; font-weight: bold; }
-
-        /* Attendance Styles */
-        .present { background-color: var(--present-color) !important; color: white; }
-        .leave { background-color: var(--leave-color) !important; color: white; }
-
-        /* Controls */
-        .controls { margin-top: 20px; border-top: 1px solid #eee; pt: 15px; font-size: 0.8rem; }
-        .legend { display: flex; gap: 10px; margin-top: 10px; }
-        .legend span { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        h2 {
+            text-align: center;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #4CAF50;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-<div class="calendar-container">
-    <div class="calendar-header">
-        <button onclick="changeMonth(-1)">❮</button>
-        <h3 id="monthDisplay"></h3>
-        <button onclick="changeMonth(1)">❯</button>
-    </div>
+<h2>Attendance & Leave Form</h2>
 
-    <div class="days-grid" id="daysGrid">
-        <div class="day-name">Sun</div><div class="day-name">Mon</div><div class="day-name">Tue</div>
-        <div class="day-name">Wed</div><div class="day-name">Thu</div><div class="day-name">Fri</div>
-        <div class="day-name">Sat</div>
-        </div>
+<form id="attendanceForm">
+    <input type="text" id="name" placeholder="Enter Name" required>
+    <input type="date" id="date" required>
 
-    <div class="controls">
-        <p><strong>Click a date to toggle status:</strong></p>
-        <div class="legend">
-            <span><div class="dot" style="background: var(--present-color)"></div> Present</span>
-            <span><div class="dot" style="background: var(--leave-color)"></div> Leave</span>
-            <span><div class="dot" style="background: #eee; border:1px solid #ccc"></div> Neutral</span>
-        </div>
-    </div>
-</div>
+    <select id="status" required>
+        <option value="">Select Status</option>
+        <option value="Present">Present</option>
+        <option value="Absent">Absent</option>
+        <option value="Leave">Leave</option>
+    </select>
+
+    <button type="submit">Add Record</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody id="recordTable"></tbody>
+</table>
 
 <script>
-    let date = new Date();
-    // Storage object to keep track of attendance (Key: YYYY-MM-DD)
-    const attendanceData = JSON.parse(localStorage.getItem('attendance')) || {};
+    const form = document.getElementById("attendanceForm");
+    const table = document.getElementById("recordTable");
 
-    function renderCalendar() {
-        const monthDisplay = document.getElementById('monthDisplay');
-        const daysGrid = document.getElementById('daysGrid');
-        
-        // Clear previous dates (keep day names)
-        const dayNames = document.querySelectorAll('.day-name');
-        daysGrid.innerHTML = '';
-        dayNames.forEach(d => daysGrid.appendChild(d));
+    // Load saved data
+    let records = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
 
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        
-        monthDisplay.innerText = `${new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date)} ${year}`;
-
-        const firstDay = new Date(year, month, 1).getDay();
-        const lastDay = new Date(year, month + 1, 0).getDate();
-
-        // Add empty slots for previous month
-        for (let i = 0; i < firstDay; i++) {
-            const emptyDiv = document.createElement('div');
-            daysGrid.appendChild(emptyDiv);
-        }
-
-        // Add actual days
-        for (let i = 1; i <= lastDay; i++) {
-            const dayDiv = document.createElement('div');
-            dayDiv.classList.add('day');
-            dayDiv.innerText = i;
-            
-            const dateStr = `${year}-${month + 1}-${i}`;
-            
-            // Check if it's today
-            const today = new Date();
-            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                dayDiv.classList.add('today');
-            }
-
-            // Apply saved status
-            if (attendanceData[dateStr]) {
-                dayDiv.classList.add(attendanceData[dateStr]);
-            }
-
-            // Click event to cycle status: Neutral -> Present -> Leave -> Neutral
-            dayDiv.onclick = () => {
-                if (dayDiv.classList.contains('present')) {
-                    dayDiv.classList.remove('present');
-                    dayDiv.classList.add('leave');
-                    attendanceData[dateStr] = 'leave';
-                } else if (dayDiv.classList.contains('leave')) {
-                    dayDiv.classList.remove('leave');
-                    delete attendanceData[dateStr];
-                } else {
-                    dayDiv.classList.add('present');
-                    attendanceData[dateStr] = 'present';
-                }
-                localStorage.setItem('attendance', JSON.stringify(attendanceData));
-            };
-
-            daysGrid.appendChild(dayDiv);
-        }
+    function displayRecords() {
+        table.innerHTML = "";
+        records.forEach(record => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${record.name}</td>
+                <td>${record.date}</td>
+                <td>${record.status}</td>
+            `;
+            table.appendChild(row);
+        });
     }
 
-    function changeMonth(delta) {
-        date.setMonth(date.getMonth() + delta);
-        renderCalendar();
-    }
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
 
-    renderCalendar();
+        const name = document.getElementById("name").value;
+        const date = document.getElementById("date").value;
+        const status = document.getElementById("status").value;
+
+        const record = { name, date, status };
+        records.push(record);
+
+        localStorage.setItem("attendanceRecords", JSON.stringify(records));
+
+        form.reset();
+        displayRecords();
+    });
+
+    displayRecords();
 </script>
 
 </body>

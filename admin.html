@@ -5,7 +5,7 @@
 <title>Admin Panel</title>
 
 <style>
-<input type="text" id="searchInput" placeholder="Search by Name..." onkeyup="searchRecords()" style="width:100%; padding:10px; margin:10px 0;">
+
 
 body {
     font-family: Arial;
@@ -78,6 +78,9 @@ th {
     <button id="logoutBtn" onclick="logout()">Logout</button>
     <h1>Admin Attendance Records</h1>
 
+    <input type="text" id="searchInput" placeholder="Search by Name..." onkeyup="searchRecords()" style="width:100%; padding:10px; margin:10px 0;">
+
+
     <button id="clearBtn" onclick="clearAll()">Clear All Records</button>
 
     <table>
@@ -134,6 +137,29 @@ function loadRecords() {
         table.innerHTML += row;
     });
 }
+    function searchRecords() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
+    const table = document.getElementById("recordsTable");
+
+    table.innerHTML = "";
+
+    records.forEach((r, index) => {
+        if (r.name.toLowerCase().includes(searchValue)) {
+            const row = `
+                <tr>
+                    <td>${r.name}</td>
+                    <td>${r.date}</td>
+                    <td>${r.status}</td>
+                    <td>${r.leaveType}</td>
+                    <td><button class="deleteBtn" onclick="deleteRecord(${index})">Delete</button></td>
+                </tr>
+            `;
+            table.innerHTML += row;
+        }
+    });
+}
+
 
 function deleteRecord(index) {
     let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];

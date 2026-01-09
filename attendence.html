@@ -78,6 +78,15 @@ Fill today's attendance form
 const form = document.getElementById("attendanceForm");
 const dateInput = document.getElementById("date");
 
+// ✅ Allowed users list
+const allowedUsers = [
+    "Nanu",
+    "Om",
+    "Rudra",
+    "Madh",
+    "Shiv"
+];  // Add your allowed names here
+
 // Allow only today's date
 const today = new Date().toISOString().split("T")[0];
 dateInput.value = today;
@@ -87,17 +96,23 @@ dateInput.max = today;
 form.addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const name = document.getElementById("name").value;
+    const name = document.getElementById("name").value.trim();
     const date = document.getElementById("date").value;
     const status = document.getElementById("status").value;
     const leaveType = document.getElementById("leaveType").value;
+
+    // ✅ Check allowed users
+    if (!allowedUsers.includes(name)) {
+        alert("This name is not registered. Please enter a valid user name.");
+        return;
+    }
 
     if (date !== today) {
         alert("You can only submit today's attendance!");
         return;
     }
 
-    // Save directly for admin panel
+    // Save for admin panel
     let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
 
     const record = { name, date, status, leaveType };
@@ -111,6 +126,7 @@ form.addEventListener("submit", function(e) {
     dateInput.value = today;
 });
 </script>
+
 
 
 </body>

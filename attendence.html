@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Attendance & Leave System</title>
+
+<style>
+    body {
+        font-family: Arial;
+        background: #f2f2f2;
+        padding: 20px;
+    }
+    h1, h2 {
+        text-align: center;
+    }
+    form {
+        background: white;
+        padding: 20px;
+        max-width: 400px;
+        margin: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #ccc;
+    }
+    input, select, button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+    }
+    table {
+        width: 100%;
+        margin-top: 30px;
+        border-collapse: collapse;
+        background: white;
+    }
+    th, td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+    th {
+        background: #4CAF50;
+        color: white;
+    }
+</style>
+</head>
+
+<body>
+
+<div style="text-align:center;">
+    <img src="logo2.png" alt="Logo">
+</div>
+
+<h1>WELCOME TO M.A.T.S. WEBPAGE</h1>
+
+<div style="text-align:center; background-color: yellow; color: #6a3254; padding:15px; font-size:20px">
+    <a style="margin-right: 20px;" href="index.html">HOME</a>
+</div>
+
+<h2>
+Hi!! Madhavan <br>
+You logged in Mats <br>
+Fill the form below to put attendance and leave
+</h2>
+
+<hr>
+
+<h2>Attendance & Leave Form</h2>
+
+<form id="attendanceForm">
+    <input type="text" id="name" placeholder="Enter Name" required>
+
+    <input type="date" id="date" required>
+
+    <select id="status" required>
+        <option value="">Select Status</option>
+        <option value="Present">Present</option>
+        <option value="Absent">Absent</option>
+        <option value="Leave">Leave</option>
+    </select>
+
+    <select id="leaveType" required>
+        <option value="">Select Leave Type</option>
+        <option value="Normal Leave">Normal Leave</option>
+        <option value="Emergency Leave">Emergency Leave</option>
+        <option value="Education Leave">Education Leave</option>
+    </select>
+
+    <button type="submit">Add Record</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Leave Type</th>
+        </tr>
+    </thead>
+    <tbody id="recordTable"></tbody>
+</table>
+
+<script>
+const form = document.getElementById("attendanceForm");
+const table = document.getElementById("recordTable");
+const dateInput = document.getElementById("date");
+
+// Set only today's date allowed
+const today = new Date().toISOString().split("T")[0];
+dateInput.value = today;
+dateInput.min = today;
+dateInput.max = today;
+
+// Load saved data
+let records = JSON.parse(localStorage.getItem("attendanceRecords")) || [];
+
+function displayRecords() {
+    table.innerHTML = "";
+    records.forEach(record => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${record.name}</td>
+            <td>${record.date}</td>
+            <td>${record.status}</td>
+            <td>${record.leaveType}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const date = document.getElementById("date").value;
+    const status = document.getElementById("status").value;
+    const leaveType = document.getElementById("leaveType").value;
+
+    // Ensure only today's date is allowed
+    if (date !== today) {
+        alert("You can only enter today's attendance!");
+        return;
+    }
+
+    const record = { name, date, status, leaveType };
+    records.push(record);
+
+    localStorage.setItem("attendanceRecords", JSON.stringify(records));
+
+    form.reset();
+    dateInput.value = today;
+
+    displayRecords();
+});
+
+displayRecords();
+</script>
+
+</body>
+</html>

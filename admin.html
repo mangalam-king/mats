@@ -50,6 +50,14 @@ th {
     padding: 5px 10px;
     cursor: pointer;
 }
+#clearBtn {
+    background: darkorange;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
 </style>
 </head>
 
@@ -67,6 +75,8 @@ th {
 <div id="adminPanel" style="display:none;">
     <button id="logoutBtn" onclick="logout()">Logout</button>
     <h1>Admin Attendance Records</h1>
+
+    <button id="clearBtn" onclick="clearAll()">Clear All Records</button>
 
     <table>
         <thead>
@@ -132,8 +142,14 @@ function deleteRecord(index) {
         loadRecords();
     }
 }
+
+function clearAll() {
+    if (confirm("This will delete ALL records. Are you sure?")) {
+        localStorage.removeItem("adminAttendanceRecords");
+        loadRecords();
+    }
+}
 </script>
 
 </body>
 </html>
-

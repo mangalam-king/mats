@@ -35,6 +35,11 @@
             text-align: center;
             margin-top: 10px;
         }
+        .captcha {
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -43,12 +48,16 @@
     <h2>Login</h2>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
+
+    <div class="captcha" id="captchaText"></div>
+    <input type="text" id="captchaInput" placeholder="Enter captcha answer">
+
     <button onclick="login()">Login</button>
     <div class="error" id="error"></div>
 </div>
 
 <script>
-    // Multiple users
+    // Multiple users (UNCHANGED)
     const users = [
         { username: "rudra", password: "rudra123", page: "attendence.html" },
         { username: "nanu1", password: "nanu123", page: "attendence.html" },
@@ -58,9 +67,29 @@
         { username: "ms1313", password: "ms1313", page: "admin.html" }
     ];
 
+    // Generate captcha
+    let num1, num2, captchaAnswer;
+
+    function generateCaptcha() {
+        num1 = Math.floor(Math.random() * 10) + 1;
+        num2 = Math.floor(Math.random() * 10) + 1;
+        captchaAnswer = num1 + num2;
+        document.getElementById("captchaText").innerText =
+            "Captcha: " + num1 + " + " + num2 + " = ?";
+    }
+
+    generateCaptcha();
+
     function login() {
         const uname = document.getElementById("username").value;
         const pass = document.getElementById("password").value;
+        const captchaInput = document.getElementById("captchaInput").value;
+
+        if (parseInt(captchaInput) !== captchaAnswer) {
+            document.getElementById("error").innerText = "Captcha incorrect!";
+            generateCaptcha();
+            return;
+        }
 
         const user = users.find(
             u => u.username === uname && u.password === pass
@@ -71,10 +100,10 @@
         } else {
             document.getElementById("error").innerText =
                 "Invalid username or password";
+            generateCaptcha();
         }
     }
 </script>
 
 </body>
-
 </html>

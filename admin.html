@@ -2,18 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Panel</title>
+<title>M.A.T.S Admin Panel</title>
 
 <style>
-
-
 body {
     font-family: Arial;
     background: #f2f2f2;
     padding: 20px;
 }
-h1 {
+h1, h2 {
     text-align: center;
+    color: #6a3254;
 }
 table {
     width: 100%;
@@ -30,7 +29,7 @@ th {
     background: #f0f0f0;
 }
 #loginBox, #adminPanel {
-    max-width: 900px;
+    max-width: 1100px;
     margin: auto;
     background: white;
     padding: 20px;
@@ -52,13 +51,13 @@ th {
     padding: 5px 10px;
     cursor: pointer;
 }
-#clearBtn {
+.clearBtn {
     background: darkorange;
     color: white;
     border: none;
-    padding: 10px 15px;
-    margin-bottom: 10px;
+    padding: 8px 15px;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 </style>
 </head>
@@ -76,13 +75,47 @@ th {
 <!-- Admin Panel -->
 <div id="adminPanel" style="display:none;">
     <button id="logoutBtn" onclick="logout()">Logout</button>
-    <h1>Admin Attendance Records</h1>
+    <h1>M.A.T.S Admin Panel</h1>
 
-    <input type="text" id="searchInput" placeholder="Search by Name..." onkeyup="searchRecords()" style="width:100%; padding:10px; margin:10px 0;">
+    <!-- Orders -->
+    <h2>Orders</h2>
+    <button class="clearBtn" onclick="clearOrders()">Clear All Orders</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody id="ordersTable"></tbody>
+    </table>
 
+    <!-- Enquiries -->
+    <h2>Enquiries</h2>
+    <button class="clearBtn" onclick="clearEnquiries()">Clear All Enquiries</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>DOB</th>
+                <th>Father</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody id="enquiriesTable"></tbody>
+    </table>
 
-    <button id="clearBtn" onclick="clearAll()">Clear All Records</button>
-
+    <!-- Attendance -->
+    <h2>Attendance Records</h2>
+    <button class="clearBtn" onclick="clearAttendance()">Clear All Attendance</button>
     <table>
         <thead>
             <tr>
@@ -93,20 +126,23 @@ th {
                 <th>Delete</th>
             </tr>
         </thead>
-        <tbody id="recordsTable"></tbody>
+        <tbody id="attendanceTable"></tbody>
     </table>
+
 </div>
 
 <script>
-const ADMIN_PASSWORD = "12345";   // Change password if needed
+const ADMIN_PASSWORD = "12345";
 
+/* Login */
 function login() {
     const pass = document.getElementById("password").value;
-
     if (pass === ADMIN_PASSWORD) {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("adminPanel").style.display = "block";
-        loadRecords();
+        loadOrders();
+        loadEnquiries();
+        loadAttendance();
     } else {
         alert("Wrong password!");
     }
@@ -118,63 +154,106 @@ function logout() {
     document.getElementById("password").value = "";
 }
 
-function loadRecords() {
-    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
-    const table = document.getElementById("recordsTable");
+/* Orders */
+function loadOrders() {
+    let orders = JSON.parse(localStorage.getItem("matsOrders")) || [];
+    const table = document.getElementById("ordersTable");
+    table.innerHTML = "";
 
+    orders.forEach((o, index) => {
+        table.innerHTML += `
+            <tr>
+                <td>${o.name}</td>
+                <td>${o.phone}</td>
+                <td>${o.item}</td>
+                <td>${o.quantity}</td>
+                <td>${o.address}</td>
+                <td>${o.email}</td>
+                <td><button class="deleteBtn" onclick="deleteOrder(${index})">Delete</button></td>
+            </tr>
+        `;
+    });
+}
+
+function deleteOrder(index) {
+    let orders = JSON.parse(localStorage.getItem("matsOrders")) || [];
+    orders.splice(index, 1);
+    localStorage.setItem("matsOrders", JSON.stringify(orders));
+    loadOrders();
+}
+
+function clearOrders() {
+    if (confirm("Delete all orders?")) {
+        localStorage.removeItem("matsOrders");
+        loadOrders();
+    }
+}
+
+/* Enquiries */
+function loadEnquiries() {
+    let enquiries = JSON.parse(localStorage.getItem("matsEnquiries")) || [];
+    const table = document.getElementById("enquiriesTable");
+    table.innerHTML = "";
+
+    enquiries.forEach((e, index) => {
+        table.innerHTML += `
+            <tr>
+                <td>${e.name}</td>
+                <td>${e.phone}</td>
+                <td>${e.dob}</td>
+                <td>${e.father}</td>
+                <td>${e.address}</td>
+                <td>${e.email}</td>
+                <td><button class="deleteBtn" onclick="deleteEnquiry(${index})">Delete</button></td>
+            </tr>
+        `;
+    });
+}
+
+function deleteEnquiry(index) {
+    let enquiries = JSON.parse(localStorage.getItem("matsEnquiries")) || [];
+    enquiries.splice(index, 1);
+    localStorage.setItem("matsEnquiries", JSON.stringify(enquiries));
+    loadEnquiries();
+}
+
+function clearEnquiries() {
+    if (confirm("Delete all enquiries?")) {
+        localStorage.removeItem("matsEnquiries");
+        loadEnquiries();
+    }
+}
+
+/* Attendance */
+function loadAttendance() {
+    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
+    const table = document.getElementById("attendanceTable");
     table.innerHTML = "";
 
     records.forEach((r, index) => {
-        const row = `
+        table.innerHTML += `
             <tr>
                 <td>${r.name}</td>
                 <td>${r.date}</td>
                 <td>${r.status}</td>
                 <td>${r.leaveType}</td>
-                <td><button class="deleteBtn" onclick="deleteRecord(${index})">Delete</button></td>
+                <td><button class="deleteBtn" onclick="deleteAttendance(${index})">Delete</button></td>
             </tr>
         `;
-        table.innerHTML += row;
-    });
-}
-    function searchRecords() {
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
-    const table = document.getElementById("recordsTable");
-
-    table.innerHTML = "";
-
-    records.forEach((r, index) => {
-        if (r.name.toLowerCase().includes(searchValue)) {
-            const row = `
-                <tr>
-                    <td>${r.name}</td>
-                    <td>${r.date}</td>
-                    <td>${r.status}</td>
-                    <td>${r.leaveType}</td>
-                    <td><button class="deleteBtn" onclick="deleteRecord(${index})">Delete</button></td>
-                </tr>
-            `;
-            table.innerHTML += row;
-        }
     });
 }
 
-
-function deleteRecord(index) {
+function deleteAttendance(index) {
     let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
-
-    if (confirm("Are you sure you want to delete this record?")) {
-        records.splice(index, 1);
-        localStorage.setItem("adminAttendanceRecords", JSON.stringify(records));
-        loadRecords();
-    }
+    records.splice(index, 1);
+    localStorage.setItem("adminAttendanceRecords", JSON.stringify(records));
+    loadAttendance();
 }
 
-function clearAll() {
-    if (confirm("This will delete ALL records. Are you sure?")) {
+function clearAttendance() {
+    if (confirm("Delete all attendance records?")) {
         localStorage.removeItem("adminAttendanceRecords");
-        loadRecords();
+        loadAttendance();
     }
 }
 </script>

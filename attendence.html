@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Attendance & Leave System</title>
+<title>Attendance Submission</title>
 
 <style>
 body {
@@ -26,44 +26,37 @@ input, select, button {
     padding: 10px;
     margin-top: 10px;
 }
+button {
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background: #218838;
+}
 </style>
 </head>
 
 <body>
 
-<div style="text-align:center;">
-    <img src="logo2.png" alt="Logo">
-</div>
-
 <h1>WELCOME TO M.A.T.S. WEBPAGE</h1>
-
-<div style="text-align:center; background-color: yellow; color: #6a3254; padding:15px; font-size:20px">
-    <a href="index.html">HOME</a>
-    <a href="admin.html" style="margin-left:20px;">ADMIN PANEL</a>
-</div>
-
-<h2>
-Hi!!  <br>
-Fill today's attendance form
-</h2>
-
-<hr>
-
 <h2>Attendance & Leave Form</h2>
 
-<form id="attendanceForm">
-    <input type="text" id="name" placeholder="Enter Name" required>
+<form id="submit-to-google-sheet">
 
-    <input type="date" id="date" required>
+    <input type="text" name="name" id="name" placeholder="Enter Name" required>
 
-    <select id="status" required>
+    <input type="date" name="date" id="date" required>
+
+    <select name="status" id="status" required>
         <option value="">Select Status</option>
         <option value="Present">Present</option>
         <option value="Absent">Absent</option>
         <option value="Leave">Leave</option>
     </select>
 
-    <select id="leaveType" required>
+    <select name="leaveType" id="leaveType" required>
         <option value="">Select Leave Type</option>
         <option value="Normal Leave">Normal Leave</option>
         <option value="Emergency Leave">Emergency Leave</option>
@@ -72,21 +65,19 @@ Fill today's attendance form
     </select>
 
     <button type="submit">Submit Attendance</button>
+
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+
 <script>
-const form = document.getElementById("attendanceForm");
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbxdjgWEyDsfGNozG-55B6S77M0v8UeqLzA_xr___fHF091GFaYm-K8UhARlYn0FgpKRlg/exec";
+
+const form = document.getElementById("submit-to-google-sheet");
 const dateInput = document.getElementById("date");
 
-// ✅ Allowed users list
-const allowedUsers = [
-    "Nanu",
-    "Om",
-    "Rudra",
-    "Shiv"
-];  // Add your allowed names here
-
-// Allow only today's date
+// Only allow today's date
 const today = new Date().toISOString().split("T")[0];
 dateInput.value = today;
 dateInput.min = today;
@@ -95,38 +86,19 @@ dateInput.max = today;
 form.addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const name = document.getElementById("name").value.trim();
-    const date = document.getElementById("date").value;
-    const status = document.getElementById("status").value;
-    const leaveType = document.getElementById("leaveType").value;
+    var formData = new FormData(form);
 
-    // ✅ Check allowed users
-    if (!allowedUsers.includes(name)) {
-        alert("This name is not registered. Please enter a valid user name.");
-        return;
-    }
-
-    if (date !== today) {
-        alert("You can only submit today's attendance!");
-        return;
-    }
-
-    // Save for admin panel
-    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
-
-    const record = { name, date, status, leaveType };
-    records.push(record);
-
-    localStorage.setItem("adminAttendanceRecords", JSON.stringify(records));
-
-    alert("Attendance submitted successfully!");
-
-    form.reset();
-    dateInput.value = today;
+    fetch(scriptURL, { method: "POST", body: formData })
+        .then(response => {
+            swal("Done", "Attendance Submitted Successfully.", "success");
+            form.reset();
+            dateInput.value = today;
+        })
+        .catch(error => {
+            swal("Error", "Something went wrong. Please try again!", "error");
+        });
 });
 </script>
-
-
 
 </body>
 </html>

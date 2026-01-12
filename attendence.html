@@ -106,7 +106,7 @@
   const form = document.getElementById("attendanceForm");
   const dateInput = document.getElementById("date");
 
-  // Allow only today's date
+  // Only allow today's date
   const today = new Date().toISOString().split("T")[0];
   dateInput.value = today;
   dateInput.min = today;
@@ -115,12 +115,16 @@
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const nameValue = document.getElementById("name").value;
+    const statusValue = document.getElementById("status").value;
+    const leaveTypeValue = document.getElementById("leaveType").value;
+
     try {
       await addDoc(collection(db, "attendance"), {
-        name: name.value,
+        name: nameValue,
         date: dateInput.value,
-        status: status.value,
-        leaveType: leaveType.value,
+        status: statusValue,
+        leaveType: leaveTypeValue,
         time: new Date()
       });
 
@@ -133,6 +137,7 @@
     }
   });
 </script>
+
 
 </body>
 </html>

@@ -71,17 +71,9 @@ button:hover {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
 
 <script>
-const scriptURL =
-"https://script.google.com/macros/s/AKfycbxe3H0ESp-JkqpLIdJ993tfOmSvzWsqqIOJnxRUO_IRuTPhuST4gdZNix_85aF7JNUyEA/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxdjgWEyDsfGNozG-55B6S77M0v8UeqLzA_xr___fHF091GFaYm-K8UhARlYn0FgpKRlg/exec";
 
 const form = document.getElementById("submit-to-google-sheet");
-const dateInput = document.getElementById("date");
-
-// Only allow today's date
-const today = new Date().toISOString().split("T")[0];
-dateInput.value = today;
-dateInput.min = today;
-dateInput.max = today;
 
 form.addEventListener("submit", function(e) {
     e.preventDefault();
@@ -89,16 +81,16 @@ form.addEventListener("submit", function(e) {
     var formData = new FormData(form);
 
     fetch(scriptURL, { method: "POST", body: formData })
-        .then(response => {
-            swal("Done", "Attendance Submitted Successfully.", "success");
-            form.reset();
-            dateInput.value = today;
+        .then(res => res.text())
+        .then(text => {
+            alert("Server Response: " + text);
         })
-        .catch(error => {
-            swal("Error", "Something went wrong. Please try again!", "error");
+        .catch(err => {
+            alert("Fetch Error: " + err);
         });
 });
 </script>
+
 
 </body>
 </html>

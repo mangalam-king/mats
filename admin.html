@@ -1,261 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>M.A.T.S Admin Panel</title>
+  <title>Attendance Admin Panel</title>
 
-<style>
-body {
-    font-family: Arial;
-    background: #f2f2f2;
-    padding: 20px;
-}
-h1, h2 {
-    text-align: center;
-    color: #6a3254;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    margin-top: 20px;
-}
-th, td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
-}
-th {
-    background: #f0f0f0;
-}
-#loginBox, #adminPanel {
-    max-width: 1100px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #ccc;
-}
-#logoutBtn {
-    background: red;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    float: right;
-    cursor: pointer;
-}
-.deleteBtn {
-    background: crimson;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-.clearBtn {
-    background: darkorange;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-</style>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #6a5acd;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #f2f2f2;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- Login Box -->
-<div id="loginBox">
-    <h2>Admin Login</h2>
-    <input type="password" id="password" placeholder="Enter Admin Password">
-    <br><br>
-    <button onclick="login()">Login</button>
-</div>
+<h2>Attendance Records</h2>
 
-<!-- Admin Panel -->
-<div id="adminPanel" style="display:none;">
-    <button id="logoutBtn" onclick="logout()">Logout</button>
-    <h1>M.A.T.S Admin Panel</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Status</th>
+      <th>Leave Type</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
 
-    <!-- Orders -->
-    <h2>Orders</h2>
-    <button class="clearBtn" onclick="clearOrders()">Clear All Orders</button>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Item</th>
-                <th>Quantity</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody id="ordersTable"></tbody>
-    </table>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-    <!-- Enquiries -->
-    <h2>Enquiries</h2>
-    <button class="clearBtn" onclick="clearEnquiries()">Clear All Enquiries</button>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>DOB</th>
-                <th>Father</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody id="enquiriesTable"></tbody>
-    </table>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwWqtyzIml5hlZpx4_R6IPhAHk7KJ121s",
+    authDomain: "mats-ac2b5.firebaseapp.com",
+    projectId: "mats-ac2b5",
+    storageBucket: "mats-ac2b5.firebasestorage.app",
+    messagingSenderId: "33615427220",
+    appId: "1:33615427220:web:b83025c444656aaa972681"
+  };
 
-    <!-- Attendance -->
-    <h2>Attendance Records</h2>
-    <button class="clearBtn" onclick="clearAttendance()">Clear All Attendance</button>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Leave Type</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody id="attendanceTable"></tbody>
-    </table>
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-</div>
+  const tableBody = document.getElementById("tableBody");
 
-<script>
-const ADMIN_PASSWORD = "13mats";
+  async function loadData() {
+    const querySnapshot = await getDocs(collection(db, "attendance"));
 
-/* Login */
-function login() {
-    const pass = document.getElementById("password").value;
-    if (pass === ADMIN_PASSWORD) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("adminPanel").style.display = "block";
-        loadOrders();
-        loadEnquiries();
-        loadAttendance();
-    } else {
-        alert("Wrong password!");
-    }
-}
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
 
-function logout() {
-    document.getElementById("adminPanel").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("password").value = "";
-}
+      const row = `
+        <tr>
+          <td>${data.name}</td>
+          <td>${data.date}</td>
+          <td>${data.status}</td>
+          <td>${data.leaveType}</td>
+          <td>${new Date(data.time.seconds * 1000).toLocaleString()}</td>
+        </tr>
+      `;
 
-/* Orders */
-function loadOrders() {
-    let orders = JSON.parse(localStorage.getItem("matsOrders")) || [];
-    const table = document.getElementById("ordersTable");
-    table.innerHTML = "";
-
-    orders.forEach((o, index) => {
-        table.innerHTML += `
-            <tr>
-                <td>${o.name}</td>
-                <td>${o.phone}</td>
-                <td>${o.item}</td>
-                <td>${o.quantity}</td>
-                <td>${o.address}</td>
-                <td>${o.email}</td>
-                <td><button class="deleteBtn" onclick="deleteOrder(${index})">Delete</button></td>
-            </tr>
-        `;
+      tableBody.innerHTML += row;
     });
-}
+  }
 
-function deleteOrder(index) {
-    let orders = JSON.parse(localStorage.getItem("matsOrders")) || [];
-    orders.splice(index, 1);
-    localStorage.setItem("matsOrders", JSON.stringify(orders));
-    loadOrders();
-}
-
-function clearOrders() {
-    if (confirm("Delete all orders?")) {
-        localStorage.removeItem("matsOrders");
-        loadOrders();
-    }
-}
-
-/* Enquiries */
-function loadEnquiries() {
-    let enquiries = JSON.parse(localStorage.getItem("matsEnquiries")) || [];
-    const table = document.getElementById("enquiriesTable");
-    table.innerHTML = "";
-
-    enquiries.forEach((e, index) => {
-        table.innerHTML += `
-            <tr>
-                <td>${e.name}</td>
-                <td>${e.phone}</td>
-                <td>${e.dob}</td>
-                <td>${e.father}</td>
-                <td>${e.address}</td>
-                <td>${e.email}</td>
-                <td><button class="deleteBtn" onclick="deleteEnquiry(${index})">Delete</button></td>
-            </tr>
-        `;
-    });
-}
-
-function deleteEnquiry(index) {
-    let enquiries = JSON.parse(localStorage.getItem("matsEnquiries")) || [];
-    enquiries.splice(index, 1);
-    localStorage.setItem("matsEnquiries", JSON.stringify(enquiries));
-    loadEnquiries();
-}
-
-function clearEnquiries() {
-    if (confirm("Delete all enquiries?")) {
-        localStorage.removeItem("matsEnquiries");
-        loadEnquiries();
-    }
-}
-
-/* Attendance */
-function loadAttendance() {
-    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
-    const table = document.getElementById("attendanceTable");
-    table.innerHTML = "";
-
-    records.forEach((r, index) => {
-        table.innerHTML += `
-            <tr>
-                <td>${r.name}</td>
-                <td>${r.date}</td>
-                <td>${r.status}</td>
-                <td>${r.leaveType}</td>
-                <td><button class="deleteBtn" onclick="deleteAttendance(${index})">Delete</button></td>
-            </tr>
-        `;
-    });
-}
-
-function deleteAttendance(index) {
-    let records = JSON.parse(localStorage.getItem("adminAttendanceRecords")) || [];
-    records.splice(index, 1);
-    localStorage.setItem("adminAttendanceRecords", JSON.stringify(records));
-    loadAttendance();
-}
-
-function clearAttendance() {
-    if (confirm("Delete all attendance records?")) {
-        localStorage.removeItem("adminAttendanceRecords");
-        loadAttendance();
-    }
-}
+  loadData();
 </script>
 
 </body>

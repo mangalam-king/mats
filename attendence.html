@@ -103,40 +103,53 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const form = document.getElementById("attendanceForm");
-  const dateInput = document.getElementById("date");
+  const allowedUsers = ["Nanu", "Om", "Rudra", "Shiv"];
 
-  // Only allow today's date
+  const form = document.getElementById("attendanceForm");
   const today = new Date().toISOString().split("T")[0];
-  dateInput.value = today;
-  dateInput.min = today;
-  dateInput.max = today;
+  document.getElementById("date").value = today;
+  document.getElementById("date").min = today;
+  document.getElementById("date").max = today;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nameValue = document.getElementById("name").value;
-    const statusValue = document.getElementById("status").value;
-    const leaveTypeValue = document.getElementById("leaveType").value;
+    const name = document.getElementById("name").value.trim();
+    const date = document.getElementById("date").value;
+    const status = document.getElementById("status").value;
+    const leaveType = document.getElementById("leaveType").value;
+
+    // ✅ Check allowed users
+    if (!allowedUsers.includes(name)) {
+      alert("❌ This user is not registered!");
+      return;
+    }
+
+    // ✅ Only today allowed
+    if (date !== today) {
+      alert("❌ You can only submit today's attendance!");
+      return;
+    }
 
     try {
       await addDoc(collection(db, "attendance"), {
-        name: nameValue,
-        date: dateInput.value,
-        status: statusValue,
-        leaveType: leaveTypeValue,
-        time: new Date()
+        name,
+        date,
+        status,
+        leaveType,
+        time: new Date().toISOString()
       });
 
-      alert("Attendance saved successfully!");
+      alert("✅ Attendance submitted successfully!");
       form.reset();
-      dateInput.value = today;
+      document.getElementById("date").value = today;
 
     } catch (error) {
-      alert("Error saving data: " + error.message);
+      alert("❌ Error saving data: " + error.message);
     }
   });
 </script>
+
 
 
 </body>

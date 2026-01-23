@@ -2,155 +2,134 @@
 <html>
 <head>
   <title>Attendance Form</title>
-
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: Arial;
+      background: #f2f2f2;
+      padding: 20px;
     }
-
-    .card {
-      background: white;
-      padding: 25px 30px;
-      width: 350px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
-
     h2 {
       text-align: center;
-      margin-bottom: 20px;
-      color: #333;
     }
-
+    form {
+      background: white;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
     input, select, button {
       width: 100%;
       padding: 10px;
       margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
     }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #6a5acd;
-    }
-
     button {
-      background: #6a5acd;
+      background: #6a3254;
       color: white;
       border: none;
-      margin-top: 20px;
-      font-size: 16px;
       cursor: pointer;
-    }
-
-    button:hover {
-      background: #5941c9;
     }
   </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h2>Attendance Form</h2>
+<h2>Attendance Form</h2>
 
-  <form id="attendanceForm">
+<form id="attendanceForm">
+  <input type="text" id="name" placeholder="Enter Name" required>
 
-    <input type="text" id="name" placeholder="Enter Name" required>
+  <input type="date" id="date" required>
 
-    <input type="date" id="date" required>
+  <select id="status" required>
+    <option value="">Select Status</option>
+    <option>Present</option>
+    <option>Absent</option>
+    <option>Leave</option>
+  </select>
 
-    <select id="status" required>
-      <option value="">Select Status</option>
-      <option>Present</option>
-      <option>Absent</option>
-      <option>Leave</option>
-    </select>
+  <select id="leaveType" required>
+    <option value="">Leave Type</option>
+    <option>Normal Leave</option>
+    <option>Emergency Leave</option>
+    <option>Education Leave</option>
+    <option>None</option>
+  </select>
 
-    <select id="leaveType" required>
-      <option value="">Leave Type</option>
-      <option>Normal Leave</option>
-      <option>Emergency Leave</option>
-      <option>Education Leave</option>
-      <option>None</option>
-    </select>
-
-    <button type="submit">Submit Attendance</button>
-
-  </form>
-</div>
+  <button type="submit">Submit Attendance</button>
+</form>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
+  // 🔹 Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyAwWqtyzIml5hlZpx4_R6IPhAHk7KJ121s",
     authDomain: "mats-ac2b5.firebaseapp.com",
-    projectId: "mats-ac2b5",
-    storageBucket: "mats-ac2b5.firebasestorage.app",
-    messagingSenderId: "33615427220",
-    appId: "1:33615427220:web:b83025c444656aaa972681"
+    projectId: "mats-ac2b5"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const allowedUsers = ["Nanu", "Om", "Rudra", "Shiv"];
-
   const form = document.getElementById("attendanceForm");
+  const dateInput = document.getElementById("date");
+
+  // 🔹 Allow only today's date
   const today = new Date().toISOString().split("T")[0];
-  document.getElementById("date").value = today;
-  document.getElementById("date").min = today;
-  document.getElementById("date").max = today;
+  dateInput.value = today;
+  dateInput.min = today;
+  dateInput.max = today;
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const name = document.getElementById("name").value.trim();
-    const date = document.getElementById("date").value;
     const status = document.getElementById("status").value;
     const leaveType = document.getElementById("leaveType").value;
 
-    // ✅ Check allowed users
-    if (!allowedUsers.includes(name)) {
-      alert("❌ This user is not registered!");
-      return;
-    }
-
-    // ✅ Only today allowed
-    if (date !== today) {
-      alert("❌ You can only submit today's attendance!");
-      return;
-    }
-
     try {
+      // 🔍 CHECK: Has this user already submitted today?
+      const q = query(
+        collection(db, "attendance"),
+        where("name", "==", name),
+        where("date", "==", today)
+      );
+
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        alert("❌ You have already submitted attendance for today!");
+        return;
+      }
+
+      // ✅ SAVE attendance
       await addDoc(collection(db, "attendance"), {
-        name,
-        date,
-        status,
-        leaveType,
+        name: name,
+        date: today,
+        status: status,
+        leaveType: leaveType,
         time: new Date().toISOString()
       });
 
       alert("✅ Attendance submitted successfully!");
       form.reset();
-      document.getElementById("date").value = today;
+      dateInput.value = today;
 
     } catch (error) {
       alert("❌ Error saving data: " + error.message);
     }
   });
 </script>
-
-
 
 </body>
 </html>

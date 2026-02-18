@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+body {
+font-family: Arial;
+background: #eef2f3;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+}
+.box {
+background: white;
+padding: 20px;
+width: 300px;
+border-radius: 8px;
+box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+input, button {
+width: 100%;
+padding: 10px;
+margin-top: 10px;
+}
+button {
+background: #007BFF;
+color: white;
+border: none;
+cursor: pointer;
+}
+.error {
+color: red;
+text-align: center;
+margin-top: 10px;
+}
+.captcha {
+margin-top: 10px;
+font-weight: bold;
+text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>Login</h2>
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+
+<div class="captcha" id="captchaText"></div>
+<input type="text" id="captchaInput" placeholder="Enter captcha answer">
+
+<button onclick="login()">Login</button>
+<div class="error" id="error"></div>
+</div>
+
+<script>
+const users = [
+{ username: "rudra", password: "rudra123", page: "rudra.html" },
+{ username: "nanu", password: "nanu123", page: "nanu.html" },
+{ username: "om", password: "om123", page: "om.html" },
+{ username: "shiv", password: "shiv123", page: "shiv.html" },
+{ username: "ms1313", password: "ms1313", page: "admin.html" }
+];
+
+let num1, num2, captchaAnswer;
+
+function generateCaptcha() {
+num1 = Math.floor(Math.random() * 10) + 1;
+num2 = Math.floor(Math.random() * 10) + 1;
+captchaAnswer = num1 + num2;
+document.getElementById("captchaText").innerText =
+"Captcha: " + num1 + " + " + num2 + " = ?";
+}
+
+generateCaptcha();
+
+function login() {
+const uname = document.getElementById("username").value;
+const pass = document.getElementById("password").value;
+const captchaInput = document.getElementById("captchaInput").value;
+
+if (parseInt(captchaInput) !== captchaAnswer) {
+document.getElementById("error").innerText = "Captcha incorrect!";
+generateCaptcha();
+return;
+}
+
+const user = users.find(
+u => u.username === uname && u.password === pass
+);
+
+if (user) {
+window.location.href = user.page;
+} else {
+document.getElementById("error").innerText =
+"Invalid username or password";
+generateCaptcha();
+}
+}
+</script>
+
+</body>
+</html>

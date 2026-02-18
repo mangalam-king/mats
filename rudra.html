@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance Form</title>
+  <style>
+    body { font-family: Arial; background: #f2f2f2; padding: 20px; }
+    h2 { text-align: center; }
+    form { background: white; padding: 20px; max-width: 400px; margin: auto;
+      border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+    input, select, button { width: 100%; padding: 10px; margin-top: 10px; }
+    button { background: #6a3254; color: white; border: none; cursor: pointer; }
+    table { margin:30px auto; width:90%; border-collapse:collapse; background:white; }
+    th, td { padding:10px; border:1px solid #ccc; text-align:center; }
+  </style>
+</head>
+<body>
+
+<h2>Attendance Form</h2>
+
+<form id="attendanceForm">
+  <input type="text" value="rudra" readonly required>
+  <input type="date" id="date" required>
+
+  <select id="status" required>
+    <option value="">Select Status</option>
+    <option>Present</option>
+    <option>Absent</option>
+    <option>Leave</option>
+  </select>
+
+  <select id="leaveType" required>
+    <option value="">Leave Type</option>
+    <option>Normal Leave</option>
+    <option>Emergency Leave</option>
+    <option>Education Leave</option>
+    <option>None</option>
+  </select>
+
+  <button type="submit">Submit Attendance</button>
+</form>
+
+<table id="attendanceTable">
+<tr><th>Date</th><th>Status</th><th>Leave Type</th></tr>
+</table>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, query, where, getDocs } 
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwWqtyzIml5hlZpx4_R6IPhAHk7KJ121s",
+    authDomain: "mats-ac2b5.firebaseapp.com",
+    projectId: "mats-ac2b5"
+  };
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const username = "rudra";
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("date").value = today;
+
+const table = document.getElementById("attendanceTable");
+
+async function loadAttendance() {
+  const q = query(collection(db,"attendance"), where("name","==",username));
+  const snapshot = await getDocs(q);
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    table.innerHTML += `<tr><td>${d.date}</td><td>${d.status}</td><td>${d.leaveType}</td></tr>`;
+  });
+}
+loadAttendance();
+
+async function autoAbsentCheck() {
+  if (new Date().getHours() >= 15) {
+    const q = query(collection(db,"attendance"),
+      where("name","==",username),
+      where("date","==",today));
+    const snap = await getDocs(q);
+    if (snap.empty) {
+      await addDoc(collection(db,"attendance"), {
+        name: username,
+        date: today,
+        status: "Absent",
+        leaveType: "None",
+        time: new Date().toISOString(),
+        auto:true
+      });
+      location.reload();
+    }
+  }
+}
+autoAbsentCheck();
+
+document.getElementById("attendanceForm").addEventListener("submit", async(e)=>{
+  e.preventDefault();
+  const status = document.getElementById("status").value;
+  const leaveType = document.getElementById("leaveType").value;
+
+  const q = query(collection(db,"attendance"),
+    where("name","==",username),
+    where("date","==",today));
+  const snap = await getDocs(q);
+  if(!snap.empty){ alert("Already submitted today!"); return;}
+
+  await addDoc(collection(db,"attendance"),{
+    name: username,
+    date: today,
+    status,
+    leaveType,
+    time:new Date().toISOString()
+  });
+  alert("Attendance Submitted!");
+  location.reload();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel - Attendance</title>
+  <style>
+    body { font-family: Arial; background:#f4f6f9; padding:20px; }
+    h2 { text-align:center; }
+    table { width:100%; border-collapse:collapse; background:white; }
+    th, td { padding:10px; border:1px solid #ccc; text-align:center; }
+    th { background:#6a3254; color:white; }
+    button { padding:5px 8px; background:#6a3254; color:white; border:none; cursor:pointer; }
+  </style>
+</head>
+<body>
+
+<h2>Attendance Admin Panel</h2>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Date</th>
+<th>Status</th>
+<th>Leave Type</th>
+<th>Time</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc, updateDoc }
+from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAwWqtyzIml5hlZpx4_R6IPhAHk7KJ121s",
+    authDomain: "mats-ac2b5.firebaseapp.com",
+    projectId: "mats-ac2b5"
+  };
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const tableBody = document.getElementById("tableBody");
+
+async function loadAttendance(){
+  const q = query(collection(db,"attendance"), orderBy("time","desc"));
+  const snapshot = await getDocs(q);
+  tableBody.innerHTML="";
+  snapshot.forEach(d=>{
+    const data=d.data();
+    tableBody.innerHTML+=`
+    <tr>
+    <td>${data.name}</td>
+    <td>${data.date}</td>
+    <td contenteditable="true" id="status-${d.id}">${data.status}</td>
+    <td>${data.leaveType}</td>
+    <td>${new Date(data.time).toLocaleString()}</td>
+    <td>
+      <button onclick="updateRecord('${d.id}')">Edit</button>
+      <button onclick="deleteRecord('${d.id}')">Delete</button>
+    </td>
+    </tr>`;
+  });
+}
+
+window.updateRecord=async(id)=>{
+  const newStatus=document.getElementById("status-"+id).innerText;
+  await updateDoc(doc(db,"attendance",id),{status:newStatus});
+  alert("Updated");
+};
+
+window.deleteRecord=async(id)=>{
+  if(confirm("Delete this record?")){
+    await deleteDoc(doc(db,"attendance",id));
+    loadAttendance();
+  }
+};
+
+loadAttendance();
+</script>
+
+</body>
+</html>

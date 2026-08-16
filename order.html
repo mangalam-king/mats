@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>M.A.T.S Webpage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M.A.T.S Webpage - Shop</title>
 
 <style>
 body {
@@ -11,196 +12,2458 @@ body {
     margin: 0;
     padding: 0;
 }
+
 .header {
     text-align: center;
     padding: 20px;
     background: white;
 }
+
 .header img {
     width: 120px;
+    max-width: 80%;
 }
+
 h1 {
     color: #6a3254;
 }
+
 .nav {
     text-align: center;
     background: yellow;
     padding: 15px;
     font-size: 20px;
 }
+
 .nav a {
     text-decoration: none;
     color: #6a3254;
     margin: 0 20px;
     font-weight: bold;
 }
+
 .container {
-    max-width: 700px;
+    max-width: 900px;
     margin: 30px auto;
     background: white;
     padding: 25px;
     border-radius: 10px;
     box-shadow: 0 0 10px #ccc;
 }
+
 label {
     font-weight: bold;
+    display: block;
+    margin-top: 8px;
 }
-input, button {
+
+input,
+textarea,
+select,
+button {
     width: 100%;
+    box-sizing: border-box;
     padding: 10px;
     margin-top: 5px;
     margin-bottom: 15px;
 }
+
 button {
     background: #6a3254;
     color: white;
     border: none;
     cursor: pointer;
     font-size: 16px;
+    border-radius: 5px;
 }
+
 button:hover {
     background: #532445;
 }
+
+button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
 .footer {
     text-align: center;
     padding: 20px;
     background: yellow;
     font-size: 18px;
 }
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.product-card {
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 10px;
+    background: white;
+}
+
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.product-card h3 {
+    margin-bottom: 5px;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #6a3254;
+}
+
+.old-price {
+    color: #777;
+    margin-left: 5px;
+}
+
+.cart-item {
+    border-bottom: 1px solid #ddd;
+    padding: 12px 0;
+}
+
+.small-btn {
+    width: auto;
+    display: inline-block;
+    padding: 7px 12px;
+    margin: 3px;
+}
+
+.account-box,
+.delivery-box {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.free-delivery {
+    color: green;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.delivery-charge {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.total-box {
+    background: #f7f1f5;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.order-result {
+    background: #eaf8ea;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- Header -->
+<!-- HEADER -->
 <div class="header">
-    <img src="logo2.png">
+    <img src="logo2.png" alt="MATS Logo">
     <h1>WELCOME TO M.A.T.S. WEBPAGE</h1>
 </div>
 
-<!-- Navigation -->
+<!-- NAVIGATION -->
 <div class="nav">
     <a href="index.html">Home Page</a>
     <a href="Read More.html">Read More & Contact</a>
 </div>
 
 
-<div class="container" id="shopSection">
-<h2>Shop</h2>
-<input id="shopSearch" placeholder="Search products..." oninput="renderProducts()">
-<select id="shopCategory" onchange="renderProducts()"><option value="">All categories</option></select>
-<div id="productsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px"></div>
-<h3>Cart</h3><div id="cartBox">Cart is empty</div>
-<input id="couponInput" placeholder="Coupon code"><button type="button" onclick="applyCoupon()">Apply Coupon</button><div id="couponMsg"></div>
-<div id="cartTotal" style="font-size:20px;font-weight:bold;margin:10px 0"></div>
-<h3>Customer Account</h3>
-<div id="accountBox" style="border:1px solid #ddd;padding:15px;border-radius:10px;margin-bottom:15px">
-  <div id="accountLoggedOut">
-    <p><b>Create an account or login before placing an order.</b></p>
-    <input id="accountName" placeholder="Full name">
-    <input id="accountPhone" placeholder="Phone number">
-    <input id="accountEmail" type="email" placeholder="Email">
-    <input id="accountPassword" type="password" placeholder="Password (minimum 6 characters)">
-    <input id="accountAddress" placeholder="Address">
-    <button type="button" onclick="createCustomerAccount()">Create Account</button>
-    <button type="button" onclick="loginCustomerAccount()">Login</button>
-    <div id="accountMsg"></div>
-  </div>
-  <div id="accountLoggedIn" style="display:none">
-    <p>Logged in as <b id="accountDisplayName"></b></p>
-    <button type="button" onclick="logoutCustomerAccount()">Logout</button>
-  </div>
-</div>
-<h3>Checkout</h3>
-<input id="shopName" placeholder="Name" required><input id="shopPhone" placeholder="Phone" required><input id="shopEmail" type="email" placeholder="Email (optional)"><textarea id="shopAddress" placeholder="Address" style="width:100%;min-height:80px" required></textarea>
-<button type="button" onclick="placeShopOrder()">Place Shop Order</button><button type="button" onclick="shareLastOrder()">WhatsApp Last Order</button>
-<div id="shopResult"></div>
+<!-- SHOP -->
+<div class="container">
+
+    <h2>🛍️ M.A.T.S Shop</h2>
+
+    <input
+        id="shopSearch"
+        type="search"
+        placeholder="Search products..."
+        oninput="renderProducts()"
+    >
+
+    <select id="shopCategory" onchange="renderProducts()">
+        <option value="">All Categories</option>
+    </select>
+
+    <div id="productsGrid" class="product-grid">
+        Loading products...
+    </div>
+
 </div>
 
-<div class="container"><h2>My Orders</h2><input id="trackPhone" placeholder="Enter phone number"><button type="button" onclick="trackOrders()">Track Orders</button><div id="trackedOrders"></div></div>
+
+<!-- CART -->
+<div class="container">
+
+    <h2>🛒 My Cart</h2>
+
+    <div id="cartBox">
+        Cart is empty.
+    </div>
+
+    <input
+        id="couponInput"
+        type="text"
+        placeholder="Enter coupon code"
+    >
+
+    <button type="button" onclick="applyCoupon()">
+        Apply Coupon
+    </button>
+
+    <div id="couponMsg"></div>
+
+    <div id="cartTotal" class="total-box">
+        Cart is empty.
+    </div>
+
+</div>
+
+
+<!-- CUSTOMER ACCOUNT -->
+<div class="container">
+
+    <h2>👤 Customer Account</h2>
+
+    <div class="account-box">
+
+        <div id="accountLoggedOut">
+
+            <p>
+                <b>
+                    Create an account or login before placing an order.
+                </b>
+            </p>
+
+            <label>Full Name</label>
+            <input
+                id="accountName"
+                type="text"
+                placeholder="Your full name"
+            >
+
+            <label>Phone Number</label>
+            <input
+                id="accountPhone"
+                type="tel"
+                placeholder="Phone number"
+            >
+
+            <label>Email</label>
+            <input
+                id="accountEmail"
+                type="email"
+                placeholder="Email"
+            >
+
+            <label>Password</label>
+            <input
+                id="accountPassword"
+                type="password"
+                placeholder="Minimum 6 characters"
+            >
+
+            <label>Address</label>
+            <textarea
+                id="accountAddress"
+                placeholder="Your address"
+            ></textarea>
+
+            <button
+                type="button"
+                onclick="createCustomerAccount()"
+            >
+                Create Account
+            </button>
+
+            <button
+                type="button"
+                onclick="loginCustomerAccount()"
+            >
+                Login
+            </button>
+
+            <div id="accountMsg"></div>
+
+        </div>
+
+
+        <div
+            id="accountLoggedIn"
+            style="display:none;"
+        >
+
+            <p>
+                Logged in as:
+                <b id="accountDisplayName"></b>
+            </p>
+
+            <button
+                type="button"
+                onclick="logoutCustomerAccount()"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CHECKOUT -->
+<div class="container">
+
+    <h2>📦 Checkout</h2>
+
+    <label>Name</label>
+    <input
+        id="shopName"
+        type="text"
+        placeholder="Name"
+    >
+
+    <label>Phone</label>
+    <input
+        id="shopPhone"
+        type="tel"
+        placeholder="Phone"
+    >
+
+    <label>Email</label>
+    <input
+        id="shopEmail"
+        type="email"
+        placeholder="Email"
+    >
+
+    <label>Delivery Address</label>
+    <textarea
+        id="shopAddress"
+        placeholder="Complete delivery address"
+    ></textarea>
+
+
+    <!-- DELIVERY -->
+    <div class="delivery-box">
+
+        <h3>🚚 Delivery Charge</h3>
+
+        <p>
+            <b>Orders of ₹100 or more get FREE delivery.</b>
+        </p>
+
+        <label>
+            Distance from M.A.T.S. office
+        </label>
+
+        <input
+            id="deliveryDistance"
+            type="number"
+            min="0"
+            step="0.1"
+            placeholder="Enter distance in KM"
+            oninput="updateDelivery()"
+        >
+
+        <p id="deliveryMessage">
+            Enter your distance from the office.
+        </p>
+
+        <p class="delivery-charge">
+            Delivery Charge:
+            <span id="deliveryCharge">₹0</span>
+        </p>
+
+    </div>
+
+
+    <div
+        id="checkoutTotal"
+        class="total-box"
+    >
+        Total: ₹0
+    </div>
+
+
+    <button
+        type="button"
+        onclick="placeShopOrder()"
+    >
+        🛒 Place Order
+    </button>
+
+    <button
+        type="button"
+        onclick="shareLastOrder()"
+    >
+        📱 WhatsApp Last Order
+    </button>
+
+    <div id="shopResult"></div>
+
+</div>
+
+
+<!-- ORDER TRACKING -->
+<div class="container">
+
+    <h2>🔎 Track My Orders</h2>
+
+    <p>
+        You must enter the phone number used for your order.
+    </p>
+
+    <input
+        id="trackPhone"
+        type="tel"
+        placeholder="Enter phone number"
+    >
+
+    <button
+        type="button"
+        onclick="trackOrders()"
+    >
+        Track Orders
+    </button>
+
+    <div id="trackedOrders"></div>
+
+</div>
+
+
+<!-- FOOTER -->
+<div class="footer">
+    <a href="Read More.html">
+        Read More & Contact
+    </a>
+</div>
+
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, query, where, runTransaction, doc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-const firebaseConfig={apiKey:"AIzaSyAwWqtyzIml5hlZpx4_R6IPhAHk7KJ121s",authDomain:"mats-ac2b5.firebaseapp.com",projectId:"mats-ac2b5"};
-const app=initializeApp(firebaseConfig),db=getFirestore(app);let products=[],cart=JSON.parse(localStorage.getItem('matsCart')||'[]'),coupon=null,lastOrder=null,currentCustomer=JSON.parse(localStorage.getItem('matsCustomer')||'null');
-const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function hashPassword(text){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(text)).then(buf=>Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''));}
-function showAccount(){
-  const out=$('accountLoggedOut'), inn=$('accountLoggedIn');
-  if(currentCustomer){out.style.display='none';inn.style.display='block';$('accountDisplayName').textContent=currentCustomer.name||currentCustomer.phone||'';['shopName','shopPhone','shopEmail','shopAddress'].forEach((id,i)=>{const v=[currentCustomer.name,currentCustomer.phone,currentCustomer.email,currentCustomer.address][i];});
-    $('shopName').value=currentCustomer.name||'';$('shopPhone').value=currentCustomer.phone||'';$('shopEmail').value=currentCustomer.email||'';$('shopAddress').value=currentCustomer.address||'';
-  }else{out.style.display='block';inn.style.display='none';}
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    addDoc,
+    query,
+    where,
+    runTransaction,
+    doc,
+    serverTimestamp,
+    setDoc
+} from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+
+/* ================================
+   FIREBASE
+================================ */
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAwWqtyzIml5hlZpx4_R6IPhAHk7KJ121s",
+    authDomain: "mats-ac2b5.firebaseapp.com",
+    projectId: "mats-ac2b5"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+/* ================================
+   VARIABLES
+================================ */
+
+let products = [];
+
+let cart = JSON.parse(
+    localStorage.getItem("matsCart") || "[]"
+);
+
+let coupon = null;
+
+let lastOrder =
+    JSON.parse(
+        localStorage.getItem("matsLastOrder") || "null"
+    );
+
+let currentCustomer =
+    JSON.parse(
+        localStorage.getItem("matsCustomer") || "null"
+    );
+
+
+const $ = id =>
+    document.getElementById(id);
+
+
+/* ================================
+   ESCAPE HTML
+================================ */
+
+function esc(value) {
+
+    return String(value ?? "")
+        .replace(/[&<>"']/g, function(m) {
+
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[m];
+
+        });
+
 }
-window.createCustomerAccount=async()=>{
-  const name=$('accountName').value.trim(),phone=$('accountPhone').value.trim(),email=$('accountEmail').value.trim().toLowerCase(),password=$('accountPassword').value,address=$('accountAddress').value.trim();
-  if(!name||!phone||!password)return $('accountMsg').textContent='Enter name, phone and password.';
-  if(password.length<6)return $('accountMsg').textContent='Password must be at least 6 characters.';
-  try{
-    const existing=await getDocs(query(collection(db,'customers'),where('phone','==',phone)));
-    if(!existing.empty)return $('accountMsg').textContent='An account with this phone number already exists. Login instead.';
-    const passwordHash=await hashPassword(password), ref=doc(collection(db,'customers'));
-    const customer={id:ref.id,name,phone,email,address,passwordHash,createdAt:serverTimestamp()};
-    await txSafeSet(ref,customer);
-    currentCustomer={id:ref.id,name,phone,email,address};localStorage.setItem('matsCustomer',JSON.stringify(currentCustomer));showAccount();$('accountMsg').textContent='Account created successfully.';
-  }catch(e){$('accountMsg').textContent='Could not create account: '+e.message;}
-};
-async function txSafeSet(ref,data){const {setDoc}=await import('https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js');return setDoc(ref,data);}
-window.loginCustomerAccount=async()=>{
-  const phone=$('accountPhone').value.trim(),password=$('accountPassword').value;
-  if(!phone||!password)return $('accountMsg').textContent='Enter phone and password.';
-  try{const s=await getDocs(query(collection(db,'customers'),where('phone','==',phone)));if(s.empty)return $('accountMsg').textContent='Account not found. Create an account first.';const d=s.docs[0],x=d.data(),hash=await hashPassword(password);if(x.passwordHash!==hash)return $('accountMsg').textContent='Incorrect password.';currentCustomer={id:d.id,name:x.name||'',phone:x.phone||'',email:x.email||'',address:x.address||''};localStorage.setItem('matsCustomer',JSON.stringify(currentCustomer));showAccount();$('accountMsg').textContent='Login successful.';}catch(e){$('accountMsg').textContent='Login failed: '+e.message;}
-};
-window.logoutCustomerAccount=()=>{currentCustomer=null;localStorage.removeItem('matsCustomer');showAccount();};
-async function loadProducts(){const s=await getDocs(collection(db,'products'));products=s.docs.map(d=>({id:d.id,...d.data()}));const cats=[...new Set(products.map(x=>x.category).filter(Boolean))];$('shopCategory').innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('');renderProducts();renderCart();}
-window.renderProducts=()=>{const t=($('shopSearch').value||'').toLowerCase(),c=$('shopCategory').value;const arr=products.filter(x=>x.available!==false&&(!c||x.category===c)&&`${x.name} ${x.description} ${x.category}`.toLowerCase().includes(t));$('productsGrid').innerHTML=arr.map(x=>{const price=Number(x.discountPrice||x.price||0);return `<div style="border:1px solid #ddd;padding:12px;border-radius:10px"><img src="${esc(x.imageData||x.imageUrl||'logo2.png')}" style="width:100%;height:160px;object-fit:cover;border-radius:8px"><h3>${esc(x.name)}</h3><p>${esc(x.description)}</p><p><b>₹${price.toFixed(2)}</b> ${x.discountPrice?`<s>₹${Number(x.price).toFixed(2)}</s>`:''}</p><p>Stock: ${x.stock??0}</p><button onclick="addToCart('${x.id}')" ${Number(x.stock||0)<=0?'disabled':''}>Add to Cart</button><button onclick="buyNow('${x.id}')" ${Number(x.stock||0)<=0?'disabled':''}>Buy Now</button></div>`}).join('')||'<p>No products available.</p>';};
-window.addToCart=id=>{const p=products.find(x=>x.id===id);if(!p)return;const old=cart.find(x=>x.id===id);if(old){if(old.quantity<p.stock)old.quantity++;}else cart.push({id,name:p.name,price:Number(p.discountPrice||p.price||0),quantity:1});saveCart();};window.buyNow=id=>{addToCart(id);window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});};
-function saveCart(){localStorage.setItem('matsCart',JSON.stringify(cart));renderCart();}
-window.renderCart=()=>{if(!cart.length){$('cartBox').innerHTML='Cart is empty';$('cartTotal').textContent='';return;}$('cartBox').innerHTML=cart.map((x,i)=>`<div style="display:flex;gap:8px;align-items:center;margin:8px 0"><b>${esc(x.name)}</b> ₹${x.price.toFixed(2)} × <button onclick="changeQty(${i},-1)">−</button>${x.quantity}<button onclick="changeQty(${i},1)">+</button><button onclick="removeCart(${i})">Remove</button></div>`).join('');let sub=cart.reduce((a,x)=>a+x.price*x.quantity,0);let discount=coupon&&sub>=coupon.minOrder?sub*coupon.discount/100:0;let delivery=sub-discount>=500?0:50;$('cartTotal').textContent=`Subtotal ₹${sub.toFixed(2)} | Discount ₹${discount.toFixed(2)} | Delivery ₹${delivery.toFixed(2)} | Total ₹${(sub-discount+delivery).toFixed(2)}`;};window.changeQty=(i,d)=>{const p=products.find(x=>x.id===cart[i].id);cart[i].quantity=Math.max(1,Math.min(Number(p?.stock||999),cart[i].quantity+d));saveCart()};window.removeCart=i=>{cart.splice(i,1);saveCart()};
-window.applyCoupon=async()=>{const code=$('couponInput').value.trim().toUpperCase();if(!code)return;const s=await getDocs(query(collection(db,'coupons'),where('code','==',code),where('active','==',true)));if(s.empty){coupon=null;$('couponMsg').textContent='Invalid coupon';}else{coupon=s.docs[0].data();$('couponMsg').textContent=`Coupon applied: ${coupon.discount}%`;};renderCart();};
-window.placeShopOrder=async()=>{if(!cart.length)return alert('Cart is empty');if(!currentCustomer){$('accountMsg').textContent='Please create an account or login before ordering.';document.getElementById('accountBox').scrollIntoView({behavior:'smooth'});return;}const name=$('shopName').value.trim(),phone=$('shopPhone').value.trim(),address=$('shopAddress').value.trim();if(!name||!phone||!address)return alert('Enter name, phone and address');try{let result;await runTransaction(db,async tx=>{let sub=0;const refs=[];for(const item of cart){const r=doc(db,'products',item.id),snap=await tx.get(r);if(!snap.exists())throw new Error('Product no longer exists');const p=snap.data();if(Number(p.stock||0)<item.quantity)throw new Error(`Not enough stock for ${p.name}`);sub+=Number(p.discountPrice||p.price||0)*item.quantity;refs.push([r,p]);}let discount=coupon&&sub>=Number(coupon.minOrder||0)?sub*Number(coupon.discount||0)/100:0;let delivery=sub-discount>=500?0:50;let total=sub-discount+delivery;const orderRef=doc(collection(db,'orders'));result={id:orderRef.id,total};tx.set(orderRef,{customerId:currentCustomer.id,customerName:name,customerPhone:phone,customerEmail:$('shopEmail').value.trim(),address,items:cart.map(x=>({...x})),subtotal:sub,discount,delivery,total,status:'Pending',coupon:coupon?.code||'',createdAt:serverTimestamp()});for(const [r,p] of refs)tx.update(r,{stock:Number(p.stock)-cart.find(x=>x.id===r.id).quantity});});lastOrder=result;localStorage.setItem('matsLastOrder',JSON.stringify(result));cart=[];coupon=null;saveCart();$('shopResult').innerHTML=`<h3>Order placed!</h3><p>Order ID: <b>${esc(result.id)}</b></p><p>Total: ₹${result.total.toFixed(2)}</p><button type="button" onclick="printInvoice()">Print Invoice</button>`;loadProducts();}catch(e){alert(e.message)}};
-window.printInvoice=()=>{if(!lastOrder)lastOrder=JSON.parse(localStorage.getItem('matsLastOrder')||'null');if(!lastOrder)return;const w=window.open('','_blank');w.document.write(`<html><body><h1>M.A.T.S Invoice</h1><p>Order ID: ${esc(lastOrder.id)}</p><p>Total: ₹${Number(lastOrder.total).toFixed(2)}</p><p>Thank you for your order.</p><script>window.print()<\/script></body></html>`);w.document.close();};window.shareLastOrder=()=>{const x=lastOrder||JSON.parse(localStorage.getItem('matsLastOrder')||'null');if(!x)return alert('Place an order first');window.open('https://wa.me/?text='+encodeURIComponent(`M.A.T.S Order ${x.id} Total ₹${x.total}`),'_blank')};
-window.trackOrders=async()=>{const phone=$('trackPhone').value.trim();if(!phone)return;const s=await getDocs(query(collection(db,'orders'),where('customerPhone','==',phone)));$('trackedOrders').innerHTML=s.docs.map(d=>{const x=d.data();return `<div style="border:1px solid #ddd;padding:10px;margin:10px 0"><b>${esc(d.id)}</b><br>Status: <b>${esc(x.status)}</b><br>Total: ₹${Number(x.total||0).toFixed(2)}<br>${(x.items||[]).map(i=>esc(i.name)+' × '+i.quantity).join(', ')}</div>`}).join('')||'No orders found.';};showAccount();loadProducts();
-</script>
-<!-- Footer -->
-<div class="footer">
-    <a href="Read More.html">Read More & Contact</a>
-</div>
 
-<script>
-// Store Order Form
-document.getElementById("orderForm").addEventListener("submit", function() {
-    let orders = JSON.parse(localStorage.getItem("matsOrders")) || [];
 
-    const data = {
-        name: this.elements["name"].value,
-        phone: this.elements["Phone no."].value,
-        item: this.elements["Item"].value,
-        quantity: this.elements["Quantity"].value,
-        address: this.elements["Address"].value,
-        email: this.elements["Email"].value
+/* ================================
+   PASSWORD HASH
+================================ */
+
+async function hashPassword(text) {
+
+    const buffer =
+        await crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(text)
+        );
+
+    return Array
+        .from(new Uint8Array(buffer))
+        .map(
+            b => b.toString(16).padStart(2, "0")
+        )
+        .join("");
+
+}
+
+
+/* ================================
+   CUSTOMER ACCOUNT UI
+================================ */
+
+function showAccount() {
+
+    const loggedOut =
+        $("accountLoggedOut");
+
+    const loggedIn =
+        $("accountLoggedIn");
+
+
+    if (currentCustomer) {
+
+        loggedOut.style.display = "none";
+
+        loggedIn.style.display = "block";
+
+        $("accountDisplayName").textContent =
+            currentCustomer.name ||
+            currentCustomer.phone ||
+            "";
+
+
+        $("shopName").value =
+            currentCustomer.name || "";
+
+        $("shopPhone").value =
+            currentCustomer.phone || "";
+
+        $("shopEmail").value =
+            currentCustomer.email || "";
+
+        $("shopAddress").value =
+            currentCustomer.address || "";
+
+    }
+
+    else {
+
+        loggedOut.style.display = "block";
+
+        loggedIn.style.display = "none";
+
+    }
+
+}
+
+
+/* ================================
+   CREATE CUSTOMER ACCOUNT
+================================ */
+
+window.createCustomerAccount = async function() {
+
+    const name =
+        $("accountName").value.trim();
+
+    const phone =
+        $("accountPhone").value.trim();
+
+    const email =
+        $("accountEmail").value.trim().toLowerCase();
+
+    const password =
+        $("accountPassword").value;
+
+    const address =
+        $("accountAddress").value.trim();
+
+
+    if (!name || !phone || !password) {
+
+        $("accountMsg").innerHTML =
+            '<p class="error">Enter name, phone and password.</p>';
+
+        return;
+
+    }
+
+
+    if (password.length < 6) {
+
+        $("accountMsg").innerHTML =
+            '<p class="error">Password must be at least 6 characters.</p>';
+
+        return;
+
+    }
+
+
+    try {
+
+        const existing =
+            await getDocs(
+                query(
+                    collection(db, "customers"),
+                    where("phone", "==", phone)
+                )
+            );
+
+
+        if (!existing.empty) {
+
+            $("accountMsg").innerHTML =
+                '<p class="error">This phone number already has an account. Please login.</p>';
+
+            return;
+
+        }
+
+
+        const passwordHash =
+            await hashPassword(password);
+
+
+        const ref =
+            doc(collection(db, "customers"));
+
+
+        await setDoc(
+            ref,
+            {
+                id: ref.id,
+                name,
+                phone,
+                email,
+                address,
+                passwordHash,
+                createdAt: serverTimestamp()
+            }
+        );
+
+
+        currentCustomer = {
+
+            id: ref.id,
+            name,
+            phone,
+            email,
+            address
+
+        };
+
+
+        localStorage.setItem(
+            "matsCustomer",
+            JSON.stringify(currentCustomer)
+        );
+
+
+        showAccount();
+
+
+        $("accountMsg").innerHTML =
+            '<p class="success">Account created successfully! You can now order.</p>';
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        $("accountMsg").innerHTML =
+            '<p class="error">Could not create account: ' +
+            esc(error.message) +
+            '</p>';
+
+    }
+
+};
+
+
+/* ================================
+   LOGIN
+================================ */
+
+window.loginCustomerAccount = async function() {
+
+    const phone =
+        $("accountPhone").value.trim();
+
+    const password =
+        $("accountPassword").value;
+
+
+    if (!phone || !password) {
+
+        $("accountMsg").innerHTML =
+            '<p class="error">Enter phone and password.</p>';
+
+        return;
+
+    }
+
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                query(
+                    collection(db, "customers"),
+                    where("phone", "==", phone)
+                )
+            );
+
+
+        if (snapshot.empty) {
+
+            $("accountMsg").innerHTML =
+                '<p class="error">Account not found. Create an account first.</p>';
+
+            return;
+
+        }
+
+
+        const customerDoc =
+            snapshot.docs[0];
+
+        const data =
+            customerDoc.data();
+
+
+        const hash =
+            await hashPassword(password);
+
+
+        if (data.passwordHash !== hash) {
+
+            $("accountMsg").innerHTML =
+                '<p class="error">Incorrect password.</p>';
+
+            return;
+
+        }
+
+
+        currentCustomer = {
+
+            id: customerDoc.id,
+
+            name: data.name || "",
+
+            phone: data.phone || "",
+
+            email: data.email || "",
+
+            address: data.address || ""
+
+        };
+
+
+        localStorage.setItem(
+            "matsCustomer",
+            JSON.stringify(currentCustomer)
+        );
+
+
+        showAccount();
+
+
+        $("accountMsg").innerHTML =
+            '<p class="success">Login successful.</p>';
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        $("accountMsg").innerHTML =
+            '<p class="error">Login failed: ' +
+            esc(error.message) +
+            '</p>';
+
+    }
+
+};
+
+
+/* ================================
+   LOGOUT
+================================ */
+
+window.logoutCustomerAccount =
+    function() {
+
+        currentCustomer = null;
+
+        localStorage.removeItem(
+            "matsCustomer"
+        );
+
+        showAccount();
+
     };
 
-    orders.push(data);
-    localStorage.setItem("matsOrders", JSON.stringify(orders));
-});
 
-// Store Enquiry Form
-document.getElementById("enquiryForm").addEventListener("submit", function() {
-    let enquiries = JSON.parse(localStorage.getItem("matsEnquiries")) || [];
+/* ================================
+   LOAD PRODUCTS
+================================ */
 
-    const data = {
-        name: this.elements["name"].value,
-        phone: this.elements["Phone no."].value,
-        dob: this.elements["DOB"].value,
-        father: this.elements["FATHERS NAME"].value,
-        address: this.elements["Address"].value,
-        email: this.elements["Email"].value
+async function loadProducts() {
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(db, "products")
+            );
+
+
+        products =
+            snapshot.docs.map(
+                d => ({
+                    id: d.id,
+                    ...d.data()
+                })
+            );
+
+
+        const categories =
+            [
+                ...new Set(
+                    products
+                        .map(p => p.category)
+                        .filter(Boolean)
+                )
+            ];
+
+
+        $("shopCategory").innerHTML =
+            '<option value="">All Categories</option>' +
+
+            categories
+                .map(
+                    category =>
+                        `<option value="${esc(category)}">${esc(category)}</option>`
+                )
+                .join("");
+
+
+        renderProducts();
+
+        renderCart();
+
+    }
+
+    catch (error) {
+
+        console.error(error);
+
+        $("productsGrid").innerHTML =
+            '<p class="error">Could not load products.</p>';
+
+    }
+
+}
+
+
+/* ================================
+   RENDER PRODUCTS
+================================ */
+
+window.renderProducts =
+    function() {
+
+        const search =
+            (
+                $("shopSearch").value ||
+                ""
+            ).toLowerCase();
+
+
+        const category =
+            $("shopCategory").value;
+
+
+        const filtered =
+            products.filter(
+                product => {
+
+                    const text =
+                        `${product.name || ""}
+                         ${product.description || ""}
+                         ${product.category || ""}`
+                            .toLowerCase();
+
+
+                    return (
+
+                        product.available !== false &&
+
+                        (
+                            !category ||
+                            product.category === category
+                        ) &&
+
+                        text.includes(search)
+
+                    );
+
+                }
+            );
+
+
+        if (!filtered.length) {
+
+            $("productsGrid").innerHTML =
+                "<p>No products available.</p>";
+
+            return;
+
+        }
+
+
+        $("productsGrid").innerHTML =
+            filtered
+                .map(product => {
+
+                    const price =
+                        Number(
+                            product.discountPrice ||
+                            product.price ||
+                            0
+                        );
+
+
+                    const stock =
+                        Number(
+                            product.stock || 0
+                        );
+
+
+                    const image =
+                        product.imageData ||
+                        product.imageUrl ||
+                        "logo2.png";
+
+
+                    return `
+
+                    <div class="product-card">
+
+                        <img
+                            src="${esc(image)}"
+                            alt="${esc(product.name)}"
+                        >
+
+                        <h3>
+                            ${esc(product.name)}
+                        </h3>
+
+                        <p>
+                            ${esc(product.description)}
+                        </p>
+
+                        <p class="price">
+                            ₹${price.toFixed(2)}
+
+                            ${
+                                product.discountPrice
+                                ?
+                                `<span class="old-price">
+                                    <s>
+                                        ₹${Number(product.price || 0).toFixed(2)}
+                                    </s>
+                                </span>`
+                                :
+                                ""
+                            }
+
+                        </p>
+
+                        <p>
+                            Stock:
+                            <b>${stock}</b>
+                        </p>
+
+
+                        <button
+                            onclick="addToCart('${product.id}')"
+                            ${stock <= 0 ? "disabled" : ""}
+                        >
+                            🛒 Add to Cart
+                        </button>
+
+
+                        <button
+                            onclick="buyNow('${product.id}')"
+                            ${stock <= 0 ? "disabled" : ""}
+                        >
+                            ⚡ Buy Now
+                        </button>
+
+                    </div>
+
+                    `;
+
+                })
+                .join("");
+
     };
 
-    enquiries.push(data);
-    localStorage.setItem("matsEnquiries", JSON.stringify(enquiries));
-});
+
+/* ================================
+   ADD TO CART
+================================ */
+
+window.addToCart =
+    function(id) {
+
+        const product =
+            products.find(
+                p => p.id === id
+            );
+
+
+        if (!product)
+            return;
+
+
+        const stock =
+            Number(product.stock || 0);
+
+
+        if (stock <= 0) {
+
+            alert("This product is out of stock.");
+
+            return;
+
+        }
+
+
+        const existing =
+            cart.find(
+                item => item.id === id
+            );
+
+
+        if (existing) {
+
+            if (existing.quantity < stock) {
+
+                existing.quantity++;
+
+            }
+
+            else {
+
+                alert(
+                    "You cannot order more than available stock."
+                );
+
+            }
+
+        }
+
+        else {
+
+            cart.push({
+
+                id: product.id,
+
+                name: product.name,
+
+                price: Number(
+                    product.discountPrice ||
+                    product.price ||
+                    0
+                ),
+
+                quantity: 1
+
+            });
+
+        }
+
+
+        saveCart();
+
+    };
+
+
+/* ================================
+   BUY NOW
+================================ */
+
+window.buyNow =
+    function(id) {
+
+        window.addToCart(id);
+
+        $("cartBox").scrollIntoView({
+            behavior: "smooth"
+        });
+
+    };
+
+
+/* ================================
+   SAVE CART
+================================ */
+
+function saveCart() {
+
+    localStorage.setItem(
+        "matsCart",
+        JSON.stringify(cart)
+    );
+
+    renderCart();
+
+}
+
+
+/* ================================
+   CHANGE QUANTITY
+================================ */
+
+window.changeQty =
+    function(index, change) {
+
+        const item =
+            cart[index];
+
+
+        if (!item)
+            return;
+
+
+        const product =
+            products.find(
+                p => p.id === item.id
+            );
+
+
+        const maxStock =
+            Number(
+                product?.stock || 999
+            );
+
+
+        item.quantity =
+            Math.max(
+                1,
+                Math.min(
+                    maxStock,
+                    item.quantity + change
+                )
+            );
+
+
+        saveCart();
+
+    };
+
+
+/* ================================
+   REMOVE CART ITEM
+================================ */
+
+window.removeCart =
+    function(index) {
+
+        cart.splice(index, 1);
+
+        saveCart();
+
+    };
+
+
+/* ================================
+   CALCULATE SUBTOTAL
+================================ */
+
+function getSubtotal() {
+
+    return cart.reduce(
+        (total, item) =>
+            total +
+            Number(item.price || 0) *
+            Number(item.quantity || 0),
+        0
+    );
+
+}
+
+
+/* ================================
+   COUPON DISCOUNT
+================================ */
+
+function getCouponDiscount(subtotal) {
+
+    if (
+        !coupon ||
+        subtotal <
+        Number(coupon.minOrder || 0)
+    ) {
+
+        return 0;
+
+    }
+
+
+    return (
+        subtotal *
+        Number(coupon.discount || 0)
+    ) / 100;
+
+}
+
+
+/* ================================
+   DELIVERY CHARGE
+================================ */
+
+function calculateDeliveryCharge(
+    subtotalAfterDiscount
+) {
+
+    /*
+       ₹100 OR MORE = FREE DELIVERY
+    */
+
+    if (
+        subtotalAfterDiscount >= 100
+    ) {
+
+        return 0;
+
+    }
+
+
+    const distance =
+        parseFloat(
+            $("deliveryDistance").value
+        );
+
+
+    if (
+        isNaN(distance) ||
+        distance < 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    if (distance <= 2) {
+
+        return 10;
+
+    }
+
+
+    if (distance <= 5) {
+
+        return 20;
+
+    }
+
+
+    if (distance <= 10) {
+
+        return 30;
+
+    }
+
+
+    if (distance <= 15) {
+
+        return 40;
+
+    }
+
+
+    return 50;
+
+}
+
+
+/* ================================
+   UPDATE DELIVERY
+================================ */
+
+window.updateDelivery =
+    function() {
+
+        const subtotal =
+            getSubtotal();
+
+
+        const discount =
+            getCouponDiscount(
+                subtotal
+            );
+
+
+        const afterDiscount =
+            subtotal - discount;
+
+
+        const delivery =
+            calculateDeliveryCharge(
+                afterDiscount
+            );
+
+
+        $("deliveryCharge").textContent =
+            "₹" +
+            delivery.toFixed(2);
+
+
+        if (
+            afterDiscount >= 100
+        ) {
+
+            $("deliveryMessage").innerHTML =
+                '<span class="free-delivery">' +
+                '🎉 FREE DELIVERY! Your order is ₹100 or more.' +
+                '</span>';
+
+        }
+
+        else {
+
+            const distance =
+                parseFloat(
+                    $("deliveryDistance").value
+                );
+
+
+            if (
+                isNaN(distance)
+            ) {
+
+                $("deliveryMessage").textContent =
+                    "Enter distance from the office.";
+
+            }
+
+            else {
+
+                $("deliveryMessage").textContent =
+                    "Delivery charge is based on your distance from the office.";
+
+            }
+
+        }
+
+
+        updateCheckoutTotal();
+
+    };
+
+
+/* ================================
+   RENDER CART
+================================ */
+
+window.renderCart =
+    function() {
+
+        if (!cart.length) {
+
+            $("cartBox").innerHTML =
+                "Cart is empty.";
+
+            $("cartTotal").textContent =
+                "Cart is empty.";
+
+            updateCheckoutTotal();
+
+            return;
+
+        }
+
+
+        $("cartBox").innerHTML =
+            cart
+                .map(
+                    (item, index) => `
+
+                    <div class="cart-item">
+
+                        <b>
+                            ${esc(item.name)}
+                        </b>
+
+                        <br>
+
+                        ₹${Number(item.price).toFixed(2)}
+                        ×
+                        ${item.quantity}
+
+                        <br>
+
+                        <button
+                            class="small-btn"
+                            onclick="changeQty(${index}, -1)"
+                        >
+                            −
+                        </button>
+
+                        <button
+                            class="small-btn"
+                            onclick="changeQty(${index}, 1)"
+                        >
+                            +
+                        </button>
+
+                        <button
+                            class="small-btn"
+                            onclick="removeCart(${index})"
+                        >
+                            Remove
+                        </button>
+
+                    </div>
+
+                    `
+                )
+                .join("");
+
+
+        const subtotal =
+            getSubtotal();
+
+
+        const discount =
+            getCouponDiscount(
+                subtotal
+            );
+
+
+        const afterDiscount =
+            subtotal - discount;
+
+
+        const delivery =
+            calculateDeliveryCharge(
+                afterDiscount
+            );
+
+
+        const total =
+            afterDiscount + delivery;
+
+
+        $("cartTotal").innerHTML =
+
+            `Subtotal: ₹${subtotal.toFixed(2)}
+             <br>
+             Discount: ₹${discount.toFixed(2)}
+             <br>
+             Delivery: ₹${delivery.toFixed(2)}
+             <br>
+             <b>Total: ₹${total.toFixed(2)}</b>`;
+
+
+        updateCheckoutTotal();
+
+    };
+
+
+/* ================================
+   CHECKOUT TOTAL
+================================ */
+
+function updateCheckoutTotal() {
+
+    const subtotal =
+        getSubtotal();
+
+
+    const discount =
+        getCouponDiscount(
+            subtotal
+        );
+
+
+    const afterDiscount =
+        subtotal - discount;
+
+
+    const delivery =
+        calculateDeliveryCharge(
+            afterDiscount
+        );
+
+
+    const total =
+        afterDiscount + delivery;
+
+
+    $("checkoutTotal").innerHTML =
+
+        `Subtotal: ₹${subtotal.toFixed(2)}
+         <br>
+         Discount: ₹${discount.toFixed(2)}
+         <br>
+         Delivery: ₹${delivery.toFixed(2)}
+         <hr>
+         <b>Total: ₹${total.toFixed(2)}</b>`;
+
+}
+
+
+/* ================================
+   COUPON
+================================ */
+
+window.applyCoupon =
+    async function() {
+
+        const code =
+            $("couponInput")
+                .value
+                .trim()
+                .toUpperCase();
+
+
+        if (!code) {
+
+            $("couponMsg").innerHTML =
+                '<p class="error">Enter coupon code.</p>';
+
+            return;
+
+        }
+
+
+        try {
+
+            const snapshot =
+                await getDocs(
+                    query(
+                        collection(db, "coupons"),
+                        where("code", "==", code),
+                        where("active", "==", true)
+                    )
+                );
+
+
+            if (snapshot.empty) {
+
+                coupon = null;
+
+                $("couponMsg").innerHTML =
+                    '<p class="error">Invalid coupon.</p>';
+
+            }
+
+            else {
+
+                coupon =
+                    snapshot.docs[0].data();
+
+
+                $("couponMsg").innerHTML =
+                    '<p class="success">' +
+                    `Coupon applied: ${coupon.discount}% off` +
+                    '</p>';
+
+            }
+
+
+            renderCart();
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            $("couponMsg").innerHTML =
+                '<p class="error">Could not apply coupon.</p>';
+
+        }
+
+    };
+
+
+/* ================================
+   PLACE ORDER
+================================ */
+
+window.placeShopOrder =
+    async function() {
+
+        if (!cart.length) {
+
+            alert(
+                "Your cart is empty."
+            );
+
+            return;
+
+        }
+
+
+        /*
+          ACCOUNT REQUIRED
+        */
+
+        if (!currentCustomer) {
+
+            alert(
+                "Please create an account or login before placing an order."
+            );
+
+
+            $("accountLoggedOut")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+
+            return;
+
+        }
+
+
+        const name =
+            $("shopName")
+                .value
+                .trim();
+
+
+        const phone =
+            $("shopPhone")
+                .value
+                .trim();
+
+
+        const email =
+            $("shopEmail")
+                .value
+                .trim();
+
+
+        const address =
+            $("shopAddress")
+                .value
+                .trim();
+
+
+        const distance =
+            parseFloat(
+                $("deliveryDistance")
+                    .value
+            );
+
+
+        if (
+            !name ||
+            !phone ||
+            !address
+        ) {
+
+            alert(
+                "Please complete your delivery details."
+            );
+
+            return;
+
+        }
+
+
+        const subtotal =
+            getSubtotal();
+
+
+        const discount =
+            getCouponDiscount(
+                subtotal
+            );
+
+
+        const afterDiscount =
+            subtotal - discount;
+
+
+        /*
+          For orders below ₹100,
+          distance is required.
+        */
+
+        if (
+            afterDiscount < 100 &&
+            (
+                isNaN(distance) ||
+                distance < 0
+            )
+        ) {
+
+            alert(
+                "Please enter your distance from the M.A.T.S. office."
+            );
+
+            $("deliveryDistance")
+                .focus();
+
+            return;
+
+        }
+
+
+        const delivery =
+            calculateDeliveryCharge(
+                afterDiscount
+            );
+
+
+        const total =
+            afterDiscount + delivery;
+
+
+        try {
+
+            let result;
+
+
+            await runTransaction(
+                db,
+                async transaction => {
+
+                    let freshSubtotal = 0;
+
+                    const productRefs = [];
+
+
+                    /*
+                      CHECK STOCK
+                    */
+
+                    for (
+                        const item of cart
+                    ) {
+
+                        const productRef =
+                            doc(
+                                db,
+                                "products",
+                                item.id
+                            );
+
+
+                        const productSnap =
+                            await transaction.get(
+                                productRef
+                            );
+
+
+                        if (
+                            !productSnap.exists()
+                        ) {
+
+                            throw new Error(
+                                `Product ${item.name} no longer exists.`
+                            );
+
+                        }
+
+
+                        const product =
+                            productSnap.data();
+
+
+                        const stock =
+                            Number(
+                                product.stock || 0
+                            );
+
+
+                        if (
+                            stock <
+                            item.quantity
+                        ) {
+
+                            throw new Error(
+                                `Not enough stock for ${item.name}.`
+                            );
+
+                        }
+
+
+                        freshSubtotal +=
+
+                            Number(
+                                product.discountPrice ||
+                                product.price ||
+                                0
+                            ) *
+                            item.quantity;
+
+
+                        productRefs.push({
+
+                            ref: productRef,
+
+                            product,
+
+                            item
+
+                        });
+
+                    }
+
+
+                    /*
+                      RECALCULATE
+                    */
+
+                    const freshDiscount =
+                        getCouponDiscount(
+                            freshSubtotal
+                        );
+
+
+                    const freshAfterDiscount =
+                        freshSubtotal -
+                        freshDiscount;
+
+
+                    const freshDelivery =
+                        calculateDeliveryCharge(
+                            freshAfterDiscount
+                        );
+
+
+                    const freshTotal =
+                        freshAfterDiscount +
+                        freshDelivery;
+
+
+                    /*
+                      CREATE ORDER
+                    */
+
+                    const orderRef =
+                        doc(
+                            collection(
+                                db,
+                                "orders"
+                            )
+                        );
+
+
+                    transaction.set(
+                        orderRef,
+                        {
+
+                            customerId:
+                                currentCustomer.id,
+
+                            customerName:
+                                name,
+
+                            customerPhone:
+                                phone,
+
+                            customerEmail:
+                                email,
+
+                            address,
+
+                            distanceKm:
+                                isNaN(distance)
+                                ? 0
+                                : distance,
+
+                            items:
+                                cart.map(
+                                    item => ({
+                                        id: item.id,
+                                        name: item.name,
+                                        price: item.price,
+                                        quantity: item.quantity
+                                    })
+                                ),
+
+                            subtotal:
+                                freshSubtotal,
+
+                            discount:
+                                freshDiscount,
+
+                            delivery:
+                                freshDelivery,
+
+                            total:
+                                freshTotal,
+
+                            status:
+                                "Pending",
+
+                            coupon:
+                                coupon?.code || "",
+
+                            createdAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+
+                    /*
+                      REDUCE STOCK
+                    */
+
+                    for (
+                        const itemData of productRefs
+                    ) {
+
+                        const newStock =
+
+                            Number(
+                                itemData.product.stock || 0
+                            ) -
+                            itemData.item.quantity;
+
+
+                        transaction.update(
+                            itemData.ref,
+                            {
+                                stock:
+                                    newStock
+                            }
+                        );
+
+                    }
+
+
+                    result = {
+
+                        id:
+                            orderRef.id,
+
+                        total:
+                            freshTotal,
+
+                        subtotal:
+                            freshSubtotal,
+
+                        discount:
+                            freshDiscount,
+
+                        delivery:
+                            freshDelivery
+
+                    };
+
+                }
+            );
+
+
+            lastOrder =
+                result;
+
+
+            localStorage.setItem(
+                "matsLastOrder",
+                JSON.stringify(result)
+            );
+
+
+            /*
+              CLEAR CART
+            */
+
+            cart = [];
+
+            coupon = null;
+
+            $("couponInput").value = "";
+
+            saveCart();
+
+
+            /*
+              SUCCESS
+            */
+
+            $("shopResult").innerHTML = `
+
+                <div class="order-result">
+
+                    <h3>
+                        ✅ Order Placed Successfully!
+                    </h3>
+
+                    <p>
+                        <b>Order ID:</b>
+                        ${esc(result.id)}
+                    </p>
+
+                    <p>
+                        <b>Delivery Charge:</b>
+                        ₹${Number(result.delivery).toFixed(2)}
+                    </p>
+
+                    <p>
+                        <b>Total:</b>
+                        ₹${Number(result.total).toFixed(2)}
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="printInvoice()"
+                    >
+                        🧾 Print Invoice
+                    </button>
+
+                </div>
+
+            `;
+
+
+            await loadProducts();
+
+
+            alert(
+                "Order placed successfully!"
+            );
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Could not place order: " +
+                error.message
+            );
+
+        }
+
+    };
+
+
+/* ================================
+   PRINT INVOICE
+================================ */
+
+window.printInvoice =
+    function() {
+
+        const order =
+            lastOrder ||
+            JSON.parse(
+                localStorage.getItem(
+                    "matsLastOrder"
+                ) || "null"
+            );
+
+
+        if (!order) {
+
+            alert(
+                "No recent order found."
+            );
+
+            return;
+
+        }
+
+
+        const windowPrint =
+            window.open(
+                "",
+                "_blank"
+            );
+
+
+        windowPrint.document.write(`
+
+            <html>
+
+            <head>
+
+                <title>
+                    M.A.T.S Invoice
+                </title>
+
+                <style>
+
+                    body {
+                        font-family: Arial;
+                        padding: 30px;
+                    }
+
+                </style>
+
+            </head>
+
+            <body>
+
+                <h1>
+                    M.A.T.S
+                </h1>
+
+                <h2>
+                    Order Invoice
+                </h2>
+
+                <p>
+                    Order ID:
+                    <b>${esc(order.id)}</b>
+                </p>
+
+                <p>
+                    Subtotal:
+                    ₹${Number(order.subtotal).toFixed(2)}
+                </p>
+
+                <p>
+                    Discount:
+                    ₹${Number(order.discount).toFixed(2)}
+                </p>
+
+                <p>
+                    Delivery:
+                    ₹${Number(order.delivery).toFixed(2)}
+                </p>
+
+                <hr>
+
+                <h2>
+                    Total:
+                    ₹${Number(order.total).toFixed(2)}
+                </h2>
+
+                <p>
+                    Thank you for ordering from M.A.T.S.
+                </p>
+
+                <script>
+                    window.print();
+                <\/script>
+
+            </body>
+
+            </html>
+
+        `);
+
+
+        windowPrint.document.close();
+
+    };
+
+
+/* ================================
+   WHATSAPP
+================================ */
+
+window.shareLastOrder =
+    function() {
+
+        const order =
+            lastOrder ||
+            JSON.parse(
+                localStorage.getItem(
+                    "matsLastOrder"
+                ) || "null"
+            );
+
+
+        if (!order) {
+
+            alert(
+                "Place an order first."
+            );
+
+            return;
+
+        }
+
+
+        const message =
+
+            `M.A.T.S Order%0A` +
+            `Order ID: ${order.id}%0A` +
+            `Total: ₹${Number(order.total).toFixed(2)}`;
+
+
+        window.open(
+            "https://wa.me/?text=" +
+            encodeURIComponent(
+                `M.A.T.S Order
+Order ID: ${order.id}
+Total: ₹${Number(order.total).toFixed(2)}`
+            ),
+            "_blank"
+        );
+
+    };
+
+
+/* ================================
+   TRACK ORDERS
+================================ */
+
+window.trackOrders =
+    async function() {
+
+        if (!currentCustomer) {
+
+            alert(
+                "Please login to track your orders."
+            );
+
+            return;
+
+        }
+
+
+        const phone =
+            $("trackPhone")
+                .value
+                .trim();
+
+
+        if (!phone) {
+
+            alert(
+                "Enter your phone number."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            phone !==
+            currentCustomer.phone
+        ) {
+
+            alert(
+                "Use the phone number connected to your account."
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const snapshot =
+                await getDocs(
+                    query(
+                        collection(
+                            db,
+                            "orders"
+                        ),
+                        where(
+                            "customerId",
+                            "==",
+                            currentCustomer.id
+                        )
+                    )
+                );
+
+
+            if (
+                snapshot.empty
+            ) {
+
+                $("trackedOrders").innerHTML =
+                    "<p>No orders found.</p>";
+
+                return;
+
+            }
+
+
+            $("trackedOrders").innerHTML =
+
+                snapshot.docs
+                    .map(
+                        docSnap => {
+
+                            const order =
+                                docSnap.data();
+
+
+                            const items =
+                                (
+                                    order.items ||
+                                    []
+                                )
+                                .map(
+                                    item =>
+                                        `${esc(item.name)} × ${item.quantity}`
+                                )
+                                .join(", ");
+
+
+                            return `
+
+                            <div
+                                style="
+                                    border:1px solid #ddd;
+                                    padding:15px;
+                                    margin:10px 0;
+                                    border-radius:8px;
+                                "
+                            >
+
+                                <b>
+                                    Order ID:
+                                </b>
+
+                                ${esc(docSnap.id)}
+
+                                <br>
+
+                                <b>
+                                    Status:
+                                </b>
+
+                                ${esc(order.status || "Pending")}
+
+                                <br>
+
+                                <b>
+                                    Items:
+                                </b>
+
+                                ${items}
+
+                                <br>
+
+                                <b>
+                                    Delivery:
+                                </b>
+
+                                ₹${Number(order.delivery || 0).toFixed(2)}
+
+                                <br>
+
+                                <b>
+                                    Total:
+                                </b>
+
+                                ₹${Number(order.total || 0).toFixed(2)}
+
+                            </div>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            $("trackedOrders").innerHTML =
+                '<p class="error">Could not load orders.</p>';
+
+        }
+
+    };
+
+
+/* ================================
+   INITIAL LOAD
+================================ */
+
+showAccount();
+
+loadProducts();
+
 </script>
 
 </body>

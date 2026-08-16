@@ -1,0 +1,10 @@
+FIX FOR: Missing or insufficient permissions
+
+1. Open Firebase Console -> Firestore Database -> Rules.
+2. Replace the rules with the contents of firestore.rules in this ZIP.
+3. Click Publish.
+4. Reload your MATS admin page.
+
+IMPORTANT: These rules allow public read/write for products/orders/coupons because the current admin page uses custom login rather than Firebase Authentication. This makes the shop work without Firebase Authentication, but it is not secure against someone who inspects the website. For a production site, Firebase Authentication + admin-only rules are recommended.
+
+No Firebase Storage is required. Product images are stored as compressed imageData in Firestore.
